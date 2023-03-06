@@ -15,13 +15,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//defer func() {
-	//	err := connection.Close()
-	//	if err != nil {
-	//		fmt.Println("Errors while closing connection")
-	//		os.Exit(1)
-	//	}
-	//}()
 
 	go func() {
 		_, err := io.Copy(os.Stdout, connection)
