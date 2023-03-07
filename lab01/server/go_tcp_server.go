@@ -13,12 +13,12 @@ var (
 	//clientsList - mapa rutyn (wątków na sterydach) port:połączenie
 	// https://go.dev/tour/concurrency/1
 	clientsList    = make(map[string]net.Conn)
-	clientsListUDP = make(map[string]net.Conn)
+	clientsListUDP = make(map[string]net.PacketConn)
 	//leaveHandlerChannel, messageHandlerChannel - kanały do komunikacji między gorutynami
-	leaveHandlerChannel   = make(chan utils.Message)
-	messageHandlerChannel = make(chan utils.Message)
-	quit                  = make(chan struct{})
-	//messageHandlerUDPChannel = make(chan utils.Message)
+	leaveHandlerChannel      = make(chan utils.Message)
+	messageHandlerChannel    = make(chan utils.Message)
+	quit                     = make(chan struct{})
+	messageHandlerUDPChannel = make(chan utils.Message)
 )
 
 func main() {
@@ -26,12 +26,12 @@ func main() {
 	// pojęcia socketa zatem Java'owy czy Python'owy socket to w nomenklaturze Go jest connection
 	connection, err := net.Listen(configuration.TYPE, configuration.HOST+":"+configuration.PORT)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	udpServer, err := net.ListenUDP(configuration.TYPEUDP, &configuration.AddressUDP)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	go broadcastActions()
@@ -41,26 +41,30 @@ func main() {
 			log.Println(err)
 			continue
 		}
-		//buf := make([]byte, 1024)
-		//_, addr, err := udpServer.ReadFrom(buf)
-		//if err != nil {
-		//	log.Println(err)
-		//	continue
-		//}
 		go handleRequest(conn, udpServer)
 	}
 }
 
 func handleRequest(connection net.Conn, udpServer net.PacketConn) {
 	clientsList[connection.RemoteAddr().String()] = connection
-	//clientsListUDP[net.UDPAddr{}]
+	//buf := make([]byte, 1024)
+	//_, addr, err := udpServer.ReadFrom(buf)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//clientsListUDP[addr.String()] = udpServer
 
 	// obsługa akcji wiadomości
 	messageHandlerChannel <- utils.NewMessage(" joined to the chat.", connection)
 
+	// czytaj dane z połączenia
 	messageScanner := bufio.NewScanner(connection)
 	for messageScanner.Scan() {
-		messageHandlerChannel <- utils.NewMessage(": "+messageScanner.Text(), connection)
+		if messageScanner.Text() == "U" {
+			messageHandlerUDPChannel <- utils.NewMessage(messageScanner.Text(), connection)
+		} else {
+			messageHandlerChannel <- utils.NewMessage(": "+messageScanner.Text(), connection)
+		}
 	}
 
 	// usuwanie zakończonego połączenia z klientem gdy ten się rozłączy
@@ -78,23 +82,14 @@ func broadcastActions() {
 			handleMessage(msg)
 		case msg := <-leaveHandlerChannel:
 			handleLeave(msg)
+		case msg := <-messageHandlerUDPChannel:
+			handleMessageUDP(msg)
 		}
 	}
 }
 
 func handleMessage(msg utils.Message) {
-	if msg.Text == "U" {
-		for _, updChannel := range clientsListUDP {
-			if msg.Address == updChannel.RemoteAddr().String() {
-				continue
-			}
-			_, err := fmt.Fprintln(updChannel, msg.Text)
-			if err != nil {
-				continue
-			}
-		}
-		return
-	}
+	log.Printf("message not U; message value: %v\n", msg.Text)
 	for _, connection := range clientsList {
 		if msg.Address == connection.RemoteAddr().String() {
 			continue
@@ -104,6 +99,20 @@ func handleMessage(msg utils.Message) {
 			continue
 		}
 	}
+}
+
+func handleMessageUDP(msg utils.Message) {
+	log.Printf("message U; message value: %v\n", msg.Text)
+	//for _, udpChannel := range clientsListUDP {
+	//	log.Printf("iterate in clientsListUDP: elem %v\n", udpChannel.RemoteAddr())
+	//	if msg.Address == udpChannel.RemoteAddr().String() {
+	//		continue
+	//	}
+	//	_, err := fmt.Fprintln(udpChannel, utils.GetAsciiArt())
+	//	if err != nil {
+	//		continue
+	//	}
+	//}
 }
 
 func handleLeave(msg utils.Message) {
