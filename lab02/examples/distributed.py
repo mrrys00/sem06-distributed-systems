@@ -1,12 +1,13 @@
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
 from enum import Enum
 
 app=FastAPI( )
 
 # sample requests and queries
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def root() :
-    return {"message" : "Hello World"}
+    return "<!DOCTYPE html><html><body><h2>HTML Buttons</h2><p>HTML buttons are defined with the button tag:</p><button>Click me</button></body></html>"
 
 # sample path paramters => entries in URL
 @app.get("/hello/{name}")

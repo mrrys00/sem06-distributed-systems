@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sample Form</title>
+</head>
+
+<body>
+    <p>Show fucking weather:</p>
+    <br />
+    <form method="post">
+        <input type="text" name="location" />
+        <input type="number" name="days" />
+        <input type="submit">
+    </form>
+
+    <p>Weather for: {{ location }}, {{ days }} days</p>
+
+</body>
+
+</html>
