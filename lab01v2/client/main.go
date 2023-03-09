@@ -19,7 +19,6 @@ func main() {
 	defer sUDP.Close()
 	defer s2.Close()
 
-	// w rutyne wpierdolić czytanie tekstu
 	go handleUDP(sUDP)
 	go handleConnection(s2, sUDP)
 	go handleMessages(s2)
