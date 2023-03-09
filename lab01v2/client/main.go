@@ -20,8 +20,8 @@ func main() {
 	defer s2.Close()
 
 	// w rutyne wpierdolić czytanie tekstu
-	//go handleUDP(sUDP)
-	go handleConnection(s2)
+	go handleUDP(sUDP)
+	go handleConnection(s2, sUDP)
 	go handleMessages(s2)
 
 	for {
@@ -30,22 +30,27 @@ func main() {
 	}
 }
 
-func handleConnection(s2 net.Conn) {
+func handleConnection(s2 net.Conn, s *net.UDPConn) {
 	for {
 		reader := bufio.NewReader(os.Stdin)
-		fmt.Print("tcp>> ")
+		fmt.Print(">> ")
 		text, _ := reader.ReadString('\n')
-		s2.Write([]byte(text + "\n"))
+		data := []byte(text)
+		if text != "U\n" {
+			s2.Write(data)
+		} else {
+			s.Write([]byte("a chuuj"))
+		}
 	}
 }
 
 func handleMessages(s2 net.Conn) {
 	message := make([]byte, 2048)
 	for {
-
 		_, err := s2.Read(message)
 		if err != nil {
 			log.Printf("[ERROR] unable to read message: %s", err.Error())
+			break
 		}
 
 		log.Printf("[MSG] %s", string(message))
@@ -53,13 +58,15 @@ func handleMessages(s2 net.Conn) {
 }
 
 func handleUDP(s *net.UDPConn) {
+	message := make([]byte, 2048)
 	for {
-		reader := bufio.NewReader(os.Stdin)
-		fmt.Print("udp>> ")
-		text, _ := reader.ReadString('\n')
-		data := []byte(text + "\n")
-		_, err := s.Write(data)
-		checkError(err)
+		n, _, err := s.ReadFromUDP(message)
+		if err != nil {
+			log.Printf("[ERROR] unable to read message: %s", err.Error())
+			break
+		}
+
+		log.Printf("[MSG] %s", string(message[0:n]))
 	}
 }
 

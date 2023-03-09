@@ -26,7 +26,8 @@ func (u *User) Handle() {
 		_, err := u.connection.Read(message)
 		if err != nil {
 			log.Printf("[ERROR] unabel to received msg from %v\n", u.connection.RemoteAddr())
-			continue
+			log.Printf("error %+v", err)
+			break
 		}
 		log.Printf("[INFO] msg received from %v\n", u.connection.RemoteAddr())
 
@@ -48,6 +49,17 @@ func (u *User) SendMsg(msg string) {
 		//log
 	}
 }
+
+//func (u *User) SendMsgUDP(msg string) {
+//	if u.connection == nil {
+//		return
+//	}
+//
+//	_, err := u.connection.RemoteAddr().([]byte(msg))
+//	if err != nil {
+//		//log
+//	}
+//}
 
 type Users struct {
 	users     []*User
@@ -89,6 +101,28 @@ func (us *Users) SendMsg(from *User, msg string) {
 		u.SendMsg(msg)
 	}
 }
+
+func getUPDPort(addr net.Addr) int {
+
+	return 5
+}
+
+//func (us *Users) SendMsgUDP(from net.UDPAddr, msg string) {
+//	us.userMutex.Lock()
+//	defer us.userMutex.Unlock()
+//	var fromPort = from.Port()
+//	for _, u := range us.users {
+//		if getUPDPort(u.connection.RemoteAddr()) == fromPort {
+//			continue
+//		}
+//
+//		if u == nil {
+//			continue
+//		}
+//
+//		u.SendMsgUDP(msg)
+//	}
+//}
 
 var users Users
 
@@ -134,6 +168,9 @@ func handleUDP(s *net.UDPConn) {
 		checkError(err)
 
 		fmt.Printf("UDP received (data count %d) %v", readed, addr)
+		if readed > 0 {
+			//users.SendMsgUDP(addr, string(message))
+		}
 	}
 }
 func checkError(err error) {
