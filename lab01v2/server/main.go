@@ -30,11 +30,12 @@ func (u *User) Handle() {
 		if err != nil {
 			log.Printf("[ERROR] unabel to received msg from %v\n", u.connection.RemoteAddr())
 			log.Printf("error %+v", err)
+			u.exit()
 			break
 		}
 		log.Printf("[INFO] msg received from %v\n", u.connection.RemoteAddr())
 
-		users.SendMsg(u, string(message))
+		users.SendMsg(u, string(message[:]))
 	}
 }
 
@@ -58,15 +59,18 @@ func (u *User) SendMsgUDP(msg string, port int) {
 		return
 	}
 
-	s, err := net.ResolveUDPAddr("udp", "localhost:"+string(port))
-	log.Printf("resolved address : %v", s.Port)
-	sUDP, err := net.DialUDP("udp", nil, s)
-	checkError(err)
-	defer sUDP.Close()
+	log.Printf("trying to send UDP message : %+v", port)
+	s, err := net.ResolveUDPAddr("udp", "localhost:"+strconv.Itoa(port))
+	if err == nil {
+		log.Printf("resolved address : %v", s.Port)
+		sUDP, err := net.DialUDP("udp", nil, s)
+		checkError(err)
+		_, err = sUDP.Write([]byte(msg))
+		defer sUDP.Close()
+	}
 
-	_, err = sUDP.Write([]byte(msg))
 	if err != nil {
-		//log
+		log.Printf("error %+v\n", err)
 	}
 }
 
@@ -127,8 +131,9 @@ func (us *Users) SendMsgUDP(from *net.UDPAddr, msg string) {
 	log.Println("sendMsgUDP works here")
 	for _, u := range us.users {
 		port := getUPDPort(u.connection.RemoteAddr())
-		log.Printf("run for port : %v", port)
+		log.Printf("compare ports : from %v : to %v", from.Port, port)
 		if port == from.Port {
+			log.Print("ignore port : %v\n", port)
 			continue
 		}
 
@@ -173,6 +178,9 @@ func handleConnection(s net.Listener) {
 		fmt.Printf("Connected %v\n", connection)
 		user := NewUser(connection)
 		users.AddUser(user)
+		configurationMsg := strconv.Itoa(getUPDPort(user.connection.RemoteAddr()))
+		log.Printf("user connected on : %v\n", configurationMsg)
+		user.SendMsg(configurationMsg)
 		go user.Handle()
 	}
 }
@@ -183,10 +191,9 @@ func handleUDP(s *net.UDPConn) {
 		readed, addr, err := s.ReadFromUDP(message)
 		checkError(err)
 
-		fmt.Printf("UDP received (data count %d) %v", readed, addr)
+		fmt.Printf("UDP received (data count %d) %v\n", readed, addr)
 		if readed > 0 {
-			log.Printf("works here\n")
-			users.SendMsgUDP(addr, string(message))
+			users.SendMsgUDP(addr, string(message[:]))
 		}
 	}
 }

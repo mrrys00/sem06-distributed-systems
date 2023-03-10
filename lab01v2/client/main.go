@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -19,9 +20,34 @@ func main() {
 	defer sUDP.Close()
 	defer s2.Close()
 
-	go handleUDP(sUDP)
-	go handleConnection(s2, sUDP)
+	portBuff := make([]byte, 16)
+	for {
+		_, err := s2.Read(portBuff)
+		if err != nil {
+			log.Printf("[ERROR] unable to read message: %s", err.Error())
+			break
+		}
+		if len(portBuff) != 0 {
+			log.Printf("[MSG] %s", string(portBuff))
+			break
+		}
+	}
+	listenUDPPort, err := strconv.Atoi(string(portBuff[:5]))
+
+	sUDPListen, err := net.ListenUDP("udp", &net.UDPAddr{
+		IP:   net.ParseIP("localhost"),
+		Port: listenUDPPort,
+	})
+	if err != nil {
+		log.Printf("some listening error : %+v\n", err)
+	} else {
+		log.Println("no UDP errors")
+	}
+	defer sUDPListen.Close()
+
 	go handleMessages(s2)
+	go handleUDP(sUDPListen)
+	go handleConnection(s2, sUDP)
 
 	for {
 		//fmt.Print("client!")
@@ -52,12 +78,13 @@ func handleMessages(s2 net.Conn) {
 			break
 		}
 
-		log.Printf("[MSG] %s", string(message))
+		log.Printf("[MSG] %s", string(message[:]))
 	}
 }
 
 func handleUDP(s *net.UDPConn) {
 	message := make([]byte, 2048)
+	//log.Printf("listening UDP on port %v\n", s.RemoteAddr().String())
 	for {
 		n, _, err := s.ReadFromUDP(message)
 		if err != nil {
