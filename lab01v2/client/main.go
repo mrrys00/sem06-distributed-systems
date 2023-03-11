@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+var asciiArt = []byte("───▄▄▄\n─▄▀░▄░▀▄\n─█░█▄▀░█\n─█░▀▄▄▀█▄█▄▀\n▄▄█▄▄▄▄███▀\n")
+
 func main() {
 	s, err := net.ResolveUDPAddr("udp", "localhost:8080")
 	sUDP, err := net.DialUDP("udp", nil, s)
@@ -64,7 +66,7 @@ func handleConnection(s2 net.Conn, s *net.UDPConn) {
 		if text != "U\n" {
 			s2.Write(data)
 		} else {
-			s.Write([]byte("a chuuj"))
+			s.Write([]byte(asciiArt))
 		}
 	}
 }
@@ -92,7 +94,7 @@ func handleUDP(s *net.UDPConn) {
 			break
 		}
 
-		log.Printf("[MSG] %s", string(message[0:n]))
+		log.Printf("[MSG] \n%s", string(message[0:n]))
 	}
 }
 

@@ -13,11 +13,13 @@ import (
 type User struct {
 	connection    net.Conn
 	connectionUDP *net.UDPConn
+	id            int
 }
 
-func NewUser(c net.Conn) *User {
+func NewUser(id int, c net.Conn) *User {
 	return &User{
 		connection: c,
+		id:         id,
 	}
 }
 
@@ -26,7 +28,7 @@ func (u *User) Handle() {
 	defer u.exit()
 	for {
 		message := make([]byte, 2048)
-		_, err := u.connection.Read(message)
+		readLen, err := u.connection.Read(message)
 		if err != nil {
 			log.Printf("[ERROR] unabel to received msg from %v\n", u.connection.RemoteAddr())
 			log.Printf("error %+v", err)
@@ -35,7 +37,7 @@ func (u *User) Handle() {
 		}
 		log.Printf("[INFO] msg received from %v\n", u.connection.RemoteAddr())
 
-		users.SendMsg(u, string(message[:]))
+		users.SendMsg(u, string(message[:readLen]))
 	}
 }
 
@@ -48,6 +50,7 @@ func (u *User) SendMsg(msg string) {
 		return
 	}
 
+	log.Printf("message to be sent: %+v, : len: %+v\n", msg, len(msg))
 	_, err := u.connection.Write([]byte(msg))
 	if err != nil {
 		//log
@@ -111,7 +114,8 @@ func (us *Users) SendMsg(from *User, msg string) {
 			continue
 		}
 
-		u.SendMsg(msg)
+		tempMsg := "from: " + strconv.Itoa(from.id) + " :: " + msg
+		u.SendMsg(tempMsg)
 	}
 }
 
@@ -176,7 +180,7 @@ func handleConnection(s net.Listener) {
 		}
 
 		fmt.Printf("Connected %v\n", connection)
-		user := NewUser(connection)
+		user := NewUser(getUPDPort(connection.RemoteAddr()), connection)
 		users.AddUser(user)
 		configurationMsg := strconv.Itoa(getUPDPort(user.connection.RemoteAddr()))
 		log.Printf("user connected on : %v\n", configurationMsg)
@@ -187,12 +191,13 @@ func handleConnection(s net.Listener) {
 
 func handleUDP(s *net.UDPConn) {
 	for {
-		message := make([]byte, 20)
+		message := make([]byte, 2048)
 		readed, addr, err := s.ReadFromUDP(message)
 		checkError(err)
 
 		fmt.Printf("UDP received (data count %d) %v\n", readed, addr)
 		if readed > 0 {
+			log.Printf("recived message: \n%v\n", string(message[:readed]))
 			users.SendMsgUDP(addr, string(message[:]))
 		}
 	}
