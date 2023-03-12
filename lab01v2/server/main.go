@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"lab01v2/configuration"
 	"log"
 	"net"
 	"strconv"
@@ -82,7 +83,7 @@ func (u *User) SendMsgUDP(msg string) {
 	}
 
 	//log.Printf("trying to send UDP message : %+v", port)
-	//s, err := net.ResolveUDPAddr("udp", "localhost:"+strconv.Itoa(port))
+	//s, err := net.ResolveUDPAddr(configuration.TYPEUDP, "localhost:"+strconv.Itoa(port))
 	_, err := u.connectionUDP.Write([]byte(msg))
 	if err == nil {
 		//log.Printf("resolved address : %v", s.Port)
@@ -170,13 +171,13 @@ func (us *Users) SendMsgUDP(from *User, msg string) {
 var users Users
 
 func main() {
-	sUDP, err := net.ListenUDP("udp", &net.UDPAddr{
+	sUDP, err := net.ListenUDP(configuration.TYPEUDP, &net.UDPAddr{
 		IP:   net.ParseIP("localhost"),
 		Port: 8080,
 	})
 	checkError(err)
 
-	s2, err := net.Listen("tcp", "localhost:8080")
+	s2, err := net.Listen(configuration.TYPE, configuration.HOST+":"+configuration.PORT)
 	checkError(err)
 	defer sUDP.Close()
 	defer s2.Close()
@@ -198,9 +199,9 @@ func handleConnection(s net.Listener, sUDP *net.UDPConn) {
 		}
 
 		clientPort := getUPDPort(connection.RemoteAddr())
-		remoteAddr, err := net.ResolveUDPAddr("udp", "localhost:"+strconv.Itoa(clientPort))
-		//localAddr, err := net.ResolveUDPAddr("udp", "localhost:8080")
-		connectionUDP, err := net.DialUDP("udp", nil, remoteAddr)
+		remoteAddr, err := net.ResolveUDPAddr(configuration.TYPEUDP, "localhost:"+strconv.Itoa(clientPort))
+		//localAddr, err := net.ResolveUDPAddr(configuration.TYPEUDP, configuration.HOST+":"+configuration.PORT)
+		connectionUDP, err := net.DialUDP(configuration.TYPEUDP, nil, remoteAddr)
 
 		fmt.Printf("Connected %v\n", connection)
 		user := NewUser(clientPort, connection, connectionUDP)
@@ -213,19 +214,6 @@ func handleConnection(s net.Listener, sUDP *net.UDPConn) {
 	}
 }
 
-//	func handleUDP(s *net.UDPConn) {
-//		for {
-//			message := make([]byte, 2048)
-//			readed, addr, err := s.ReadFromUDP(message)
-//			checkError(err)
-//
-//			fmt.Printf("UDP received (data count %d) %v\n", readed, addr)
-//			if readed > 0 {
-//				log.Printf("recived message: \n%v\n", string(message[:readed]))
-//				users.SendMsgUDP(addr, string(message[:]))
-//			}
-//		}
-//	}
 func checkError(err error) {
 
 	if err != nil {
