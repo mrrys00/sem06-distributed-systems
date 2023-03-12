@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"fmt"
-	"lab01v2/configuration"
-	"lab01v2/logs"
-	"lab01v2/utils"
+	"lab01/configuration"
+	"lab01/logs"
+	"lab01/utils"
 	"net"
 	"strconv"
 )

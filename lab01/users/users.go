@@ -1,7 +1,7 @@
 package users
 
 import (
-	"lab01v2/logs"
+	"lab01/logs"
 )
 
 func (u *User) exit(usersList *Users) {

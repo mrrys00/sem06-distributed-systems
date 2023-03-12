@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"lab01v2/client/handlers"
-	"lab01v2/configuration"
-	"lab01v2/logs"
-	"lab01v2/utils"
+	"lab01/client/handlers"
+	"lab01/configuration"
+	"lab01/logs"
+	"lab01/utils"
 	"net"
 	"time"
 )

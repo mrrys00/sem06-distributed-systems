@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"lab01v2/configuration"
-	"lab01v2/logs"
-	"lab01v2/server/handlers"
-	. "lab01v2/users"
-	"lab01v2/utils"
+	"lab01/configuration"
+	"lab01/logs"
+	"lab01/server/handlers"
+	. "lab01/users"
+	"lab01/utils"
 	"net"
 	"strconv"
 	"time"

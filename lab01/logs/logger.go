@@ -1,7 +1,7 @@
 package logs
 
 import (
-	"lab01v2/configuration"
+	"lab01/configuration"
 	"log"
 )
 

@@ -2,7 +2,7 @@ package users
 
 import (
 	"fmt"
-	"lab01v2/logs"
+	"lab01/logs"
 	"strconv"
 )
 

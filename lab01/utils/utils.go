@@ -1,29 +1,36 @@
 package utils
 
 import (
+	"fmt"
+	"log"
 	"net"
-	"os"
-	"path/filepath"
+	"strconv"
+	"strings"
 )
 
-type Message struct {
-	Text    string
-	Address string
+const (
+	ASCIIART = "───▄▄▄\n─▄▀░▄░▀▄\n─█░█▄▀░█\n─█░▀▄▄▀█▄█▄▀\n▄▄█▄▄▄▄███▀\n"
+)
+
+func PrintMessage(msg string) {
+	log.Printf("%s", msg)
+	PrintTerminal()
 }
 
-func NewMessage(msg string, conn net.Conn) Message {
-	addr := conn.RemoteAddr().String()
-	return Message{
-		Text:    addr + msg,
-		Address: addr,
+func PrintTerminal() {
+	fmt.Printf(">> ")
+}
+
+func CreateUDPAddr(ip string, port int) *net.UDPAddr {
+	return &net.UDPAddr{
+		IP:   net.ParseIP(ip),
+		Port: port,
 	}
 }
 
-func GetAsciiArt() string {
-	absPath, _ := filepath.Abs("./utils/files/asciiart.txt")
-	content, err := os.ReadFile(absPath)
-	if err != nil {
-		panic(err)
-	}
-	return string(content[:])
+func GetPortFromTCP(addr net.Addr) (int, error) {
+	resArr := strings.Split(addr.String(), ":")
+	res, err := strconv.Atoi(resArr[1])
+
+	return res, err
 }
