@@ -19,18 +19,18 @@ func main() {
 	sUDP, err := net.DialUDP(configuration.TYPEUDP, nil, s)
 	logs.LogFatal(err, "Cannot connect to UDP socket")
 
-	s2, err := net.Dial(configuration.TYPE, configuration.HOST+":"+configuration.PORT)
+	sTCP, err := net.Dial(configuration.TYPE, configuration.HOST+":"+configuration.PORT)
 	logs.LogFatal(err, "Cannot connect to TCP socket")
 
-	sUDPListen := handlers.HandleChannelUDP(s2, &clientID)
+	sUDPListen := handlers.HandleChannelUDP(sTCP, &clientID)
 
 	defer sUDPListen.Close()
-	defer s2.Close()
+	defer sTCP.Close()
 	defer sUDP.Close()
 
-	go handlers.HandleTCPIncomingMsg(s2)
+	go handlers.HandleTCPIncomingMsg(sTCP)
 	go handlers.HandleUDPIncomingMsg(sUDPListen)
-	go handlers.HandleMsgSend(s2, sUDP)
+	go handlers.HandleMsgSend(sTCP, sUDP)
 
 	for {
 		logs.LogTrace(fmt.Sprintf("I'm client %v", clientID))
