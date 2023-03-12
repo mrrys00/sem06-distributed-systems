@@ -10,7 +10,10 @@ import (
 	"time"
 )
 
-var asciiArt = []byte("───▄▄▄\n─▄▀░▄░▀▄\n─█░█▄▀░█\n─█░▀▄▄▀█▄█▄▀\n▄▄█▄▄▄▄███▀\n")
+var (
+	asciiArt = "───▄▄▄\n─▄▀░▄░▀▄\n─█░█▄▀░█\n─█░▀▄▄▀█▄█▄▀\n▄▄█▄▄▄▄███▀\n"
+	clientID int
+)
 
 func main() {
 	s, err := net.ResolveUDPAddr("udp", "localhost:8080")
@@ -35,6 +38,7 @@ func main() {
 		}
 	}
 	listenUDPPort, err := strconv.Atoi(string(portBuff[:5]))
+	clientID = listenUDPPort
 
 	sUDPListen, err := net.ListenUDP("udp", &net.UDPAddr{
 		IP:   net.ParseIP("localhost"),
