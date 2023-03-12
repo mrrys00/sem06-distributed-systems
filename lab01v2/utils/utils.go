@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strconv"
+	"strings"
 )
 
 const (
@@ -24,4 +26,11 @@ func CreateUDPAddr(ip string, port int) *net.UDPAddr {
 		IP:   net.ParseIP(ip),
 		Port: port,
 	}
+}
+
+func GetPortFromTCP(addr net.Addr) (int, error) {
+	resArr := strings.Split(addr.String(), ":")
+	res, err := strconv.Atoi(resArr[1])
+
+	return res, err
 }

@@ -33,7 +33,7 @@ func LogWarning(err error, desc string) {
 }
 
 func LogInfo(err error, desc string) {
-	if configuration.LogLvl >= 4 && err != nil {
+	if configuration.LogLvl >= 4 && err == nil {
 		log.Printf("%s%s -> %+v\n", INFO, desc, err.Error())
 	}
 }
