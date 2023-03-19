@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/leesper/holmes"
 )
 
 var htmlPage = "<!DOCTYPE html>\n<html>\n<body>\n\n<p>Show information about city</p>\n\n" +
@@ -19,6 +20,42 @@ var htmlPage = "<!DOCTYPE html>\n<html>\n<body>\n\n<p>Show information about cit
 	"    <input onclick=\"myFunction()\" type=\"button\" value=\"Submit\">\n</form>\n\n<script>\n" +
 	"    function myFunction() {\n        document.getElementById(\"frm1\").submit();\n" +
 	"    }\n</script>\n\n</body>\n</html>"
+
+type ErrorPage struct {
+	StatusCode int    `json:"status_code"`
+	Err        string `json:"message"`
+}
+
+func NewErrorPage(status int, err string) *ErrorPage {
+	return &ErrorPage{
+		StatusCode: status,
+		Err:        err,
+	}
+}
+
+type ErrorM3O struct {
+	Id     string `json:"id"`
+	Code   int    `json:"code"`
+	Detail string `json:"detail"`
+	Status string `json:"status"`
+}
+
+func NewErrorM3O(id string, code int, detail, status string) *ErrorM3O {
+	return &ErrorM3O{
+		Id:     id,
+		Code:   code,
+		Detail: detail,
+		Status: status,
+	}
+}
+
+type ErrorUV struct {
+	Err string `json:"error"`
+}
+
+func NewErrorUV(err string) *ErrorUV {
+	return &ErrorUV{Err: err}
+}
 
 type ResponseWeather struct {
 	Location  string         `json:"location"`
@@ -106,24 +143,35 @@ func HandleRequest(context *gin.Context) {
 	forecastKey := context.Query("forecast")
 	indexKey := context.Query("index")
 	fmt.Println(city + " " + forecastKey + " " + indexKey)
-	resp, err := HandleExternalAPIs(city, forecastKey, indexKey)
+	resp, errorPage := HandleExternalAPIs(city, forecastKey, indexKey)
 
-	if err != nil {
-
+	if errorPage != nil {
+		context.IndentedJSON(errorPage.StatusCode, errorPage)
+		return
 	}
-	context.IndentedJSON(http.StatusOK, resp)
+	html, err := ResponseToHTML(resp)
+	if err != nil {
+		fmt.Printf("parsing html error")
+	}
+	context.Data(http.StatusOK, "text/html; charset=utf-8", html)
 }
 
-func HandleExternalAPIs(city, forecastKey, indexKey string) (*ResponseWeather, error) {
+func HandleExternalAPIs(city, forecastKey, indexKey string) (*ResponseWeather, *ErrorPage) {
 	result := new(ResponseWeather)
 
-	respHandleM3O, _ := HandleM3O(city, forecastKey)
+	respHandleM3O, err := HandleM3O(city, forecastKey)
+	if err != nil {
+		return nil, err
+	}
 	logHandleM3O, _ := PrettyStruct(&respHandleM3O)
 	fmt.Println(logHandleM3O)
 
 	lat, lng, _ := GetLatLng(respHandleM3O)
 
-	responseHandleOpenUV, _ := HandleOpenUV(lat, lng, indexKey)
+	responseHandleOpenUV, err := HandleOpenUV(lat, lng, indexKey)
+	if err != nil {
+		return nil, err
+	}
 	logHandleOpenUV, _ := PrettyStruct(&responseHandleOpenUV)
 	fmt.Println(logHandleOpenUV)
 
@@ -134,7 +182,7 @@ func HandleExternalAPIs(city, forecastKey, indexKey string) (*ResponseWeather, e
 	return result, nil
 }
 
-func HandleM3O(city, forecastKey string) (*ResponseM3O, error) {
+func HandleM3O(city, forecastKey string) (*ResponseM3O, *ErrorPage) {
 	myClient := &http.Client{Timeout: 10 * time.Second}
 
 	result := new(ResponseM3O)
@@ -159,6 +207,15 @@ func HandleM3O(city, forecastKey string) (*ResponseM3O, error) {
 		fmt.Printf("Response error: %+v\n", err)
 	}
 	fmt.Printf("Status code: %v\n", resp.StatusCode)
+	if resp.StatusCode >= 500 {
+		errPage := new(ErrorM3O)
+		UnmarshalJson(resp.Body, errPage)
+		return nil, NewErrorPage(http.StatusGone, errPage.Detail)
+	} else if resp.StatusCode != 200 {
+		errPage := new(ErrorM3O)
+		UnmarshalJson(resp.Body, errPage)
+		return nil, NewErrorPage(resp.StatusCode, errPage.Detail)
+	}
 	defer resp.Body.Close()
 
 	if UnmarshalJson(resp.Body, result) != nil {
@@ -170,7 +227,7 @@ func HandleM3O(city, forecastKey string) (*ResponseM3O, error) {
 	return result, nil
 }
 
-func HandleOpenUV(lat, lng *float64, indexKey string) (*ResponseOpenUV, error) {
+func HandleOpenUV(lat, lng *float64, indexKey string) (*ResponseOpenUV, *ErrorPage) {
 	myClient := &http.Client{Timeout: 10 * time.Second}
 
 	result := new(ResponseOpenUV)
@@ -192,6 +249,15 @@ func HandleOpenUV(lat, lng *float64, indexKey string) (*ResponseOpenUV, error) {
 		fmt.Printf("Response error: %+v\n", err)
 	}
 	fmt.Printf("Status code: %v\n", resp.StatusCode)
+	if resp.StatusCode >= 500 {
+		errPage := new(ErrorM3O)
+		UnmarshalJson(resp.Body, errPage)
+		return nil, NewErrorPage(http.StatusGone, errPage.Detail)
+	} else if resp.StatusCode != 200 {
+		errPage := new(ErrorUV)
+		UnmarshalJson(resp.Body, errPage)
+		return nil, NewErrorPage(resp.StatusCode, errPage.Err)
+	}
 	defer resp.Body.Close()
 
 	if UnmarshalJson(resp.Body, result) != nil {
@@ -235,7 +301,6 @@ func (*ResponseWeather) MergeResponses(m3o *ResponseM3O, uv *ResponseOpenUV, res
 	res.Forecast = m3o.Forecast
 	res.DailyUV = uv.Result
 	res.AverageUV = avg
-
 }
 
 func UnmarshalJson(r io.ReadCloser, target interface{}) error {
@@ -249,4 +314,13 @@ func PrettyStruct(data interface{}) (string, error) {
 	}
 
 	return string(val), nil
+}
+
+func ResponseToHTML(weather *ResponseWeather) ([]byte, error) {
+	defer holmes.Start().Stop()
+
+	jsonStr, err := json.MarshalIndent(&weather, "", "\t")
+	parsed := append([]byte("<!DOCTYPE html>\n<html>\n\n<body>\n\n<p>Response:</p>\n")[:], jsonStr...)
+	parsed = append(parsed, []byte("\n</body>\n</html>")[:]...)
+	return parsed, err
 }

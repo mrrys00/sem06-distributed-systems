@@ -1,0 +1,141 @@
+{
+	"info": {
+		"_postman_id": "4a88ca88-e31b-4f06-8350-84a0a53f4077",
+		"name": "Studia",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8752585"
+	},
+	"item": [
+		{
+			"name": "Distributed",
+			"item": [
+				{
+					"name": "lab02",
+					"item": [
+						{
+							"name": "external forecast m3o",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer YTY4NTA4MzEtMGQzYy00MTBhLWE3NDktZmI4ZDg0NGY2MzQ5"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"days\": 1,\n    \"location\": \"London\"\n}"
+								},
+								"url": {
+									"raw": "https://api.m3o.com/v1/weather/Forecast",
+									"protocol": "https",
+									"host": [
+										"api",
+										"m3o",
+										"com"
+									],
+									"path": [
+										"v1",
+										"weather",
+										"Forecast"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getUVIndex",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-access-token",
+										"value": "openuv-7c2uarlffc2bth-io"
+									}
+								],
+								"url": {
+									"raw": "https://api.openuv.io/api/v1/forecast?lat=51.52&lng=-0.11&alt=100&dt=",
+									"protocol": "https",
+									"host": [
+										"api",
+										"openuv",
+										"io"
+									],
+									"path": [
+										"api",
+										"v1",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "lat",
+											"value": "51.52"
+										},
+										{
+											"key": "lng",
+											"value": "-0.11"
+										},
+										{
+											"key": "alt",
+											"value": "100"
+										},
+										{
+											"key": "dt",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getMyService",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/weather/London/YTY4NTA4MzEtMGQzYy00MTBhLWE3NDktZmI4ZDg0NGY2MzQ5/openuv-7c2uarlffc2bth-io",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"weather",
+										"London",
+										"YTY4NTA4MzEtMGQzYy00MTBhLWE3NDktZmI4ZDg0NGY2MzQ5",
+										"openuv-7c2uarlffc2bth-io"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getStartPage",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
