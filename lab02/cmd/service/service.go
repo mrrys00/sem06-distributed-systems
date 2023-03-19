@@ -12,6 +12,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var htmlPage = "<!DOCTYPE html>\n<html>\n<body>\n\n<p>Show information about city</p>\n\n" +
+	"<form action=\"http://localhost:8080/weather\" id=\"frm1\" method=\"get\">\n" +
+	"    City: <input name=\"city\" type=\"text\"><br><br>\n    API Forecast: <input name=\"forecast\" type=\"text\"><br><br>\n" +
+	"    API UX Index: <input name=\"index\" type=\"text\"><br><br>\n" +
+	"    <input onclick=\"myFunction()\" type=\"button\" value=\"Submit\">\n</form>\n\n<script>\n" +
+	"    function myFunction() {\n        document.getElementById(\"frm1\").submit();\n" +
+	"    }\n</script>\n\n</body>\n</html>"
+
 type ResponseWeather struct {
 	Location  string         `json:"location"`
 	Region    string         `json:"region"`
@@ -80,22 +88,30 @@ type ResponseOpenUV struct {
 
 func main() {
 	router := gin.Default()
-	router.GET("/weather/:city/:forecast/:index", HandleRequest)
+
+	router.GET("/weather", HandleRequest)
+	router.GET("/", HomePage)
 
 	router.Run("localhost:8080")
 }
 
-func HandleRequest(c *gin.Context) {
-	city := c.Param("city")
-	forecastKey := c.Param("forecast")
-	indexKey := c.Param("index")
+func HomePage(context *gin.Context) {
+	context.Data(http.StatusOK, "text/html; charset=utf-8", []byte(htmlPage))
+}
+
+func HandleRequest(context *gin.Context) {
+	params := context.Request.URL.Query()
+	fmt.Println(params)
+	city := context.Query("city")
+	forecastKey := context.Query("forecast")
+	indexKey := context.Query("index")
 	fmt.Println(city + " " + forecastKey + " " + indexKey)
 	resp, err := HandleExternalAPIs(city, forecastKey, indexKey)
 
 	if err != nil {
 
 	}
-	c.IndentedJSON(http.StatusOK, resp)
+	context.IndentedJSON(http.StatusOK, resp)
 }
 
 func HandleExternalAPIs(city, forecastKey, indexKey string) (*ResponseWeather, error) {
