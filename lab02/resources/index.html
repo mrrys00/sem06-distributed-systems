@@ -2,11 +2,12 @@
 <html>
 <body>
 
-<p>Enter names in the fields, then click "Submit" to submit the form:</p>
+<p>Show information about city</p>
 
-<form action="/action_page.php" id="frm1">
-    First name: <input name="fname" type="text"><br>
-    Last name: <input name="lname" type="text"><br><br>
+<form action="http://localhost:8080/albums" id="frm1" method="get">
+    City: <input name="city" type="text"><br><br>
+    API Forecast: <input name="forecast" type="text"><br><br>
+    API UX Index: <input name="index" type="text"><br><br>
     <input onclick="myFunction()" type="button" value="Submit">
 </form>
 
