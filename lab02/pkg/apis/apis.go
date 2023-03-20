@@ -48,15 +48,15 @@ func (*ResponseWeather) MergeResponses(m3o *external.ResponseM3O, uv *external.R
 }
 
 func HomePage(context *gin.Context) {
-	context.Data(http.StatusOK, "text/html; charset=utf-8", []byte(config.HtmlPage))
+	context.Data(http.StatusOK, config.TextHTML, []byte(config.HtmlPage))
 }
 
 func HandleRequest(context *gin.Context) {
 	params := context.Request.URL.Query()
 	fmt.Println(params)
-	city := context.Query("city")
-	forecastKey := context.Query("forecast")
-	indexKey := context.Query("index")
+	city := context.Query(config.QueryCity)
+	forecastKey := context.Query(config.QueryForecast)
+	indexKey := context.Query(config.QueryIndex)
 	fmt.Println(city + " " + forecastKey + " " + indexKey)
 	resp, errorPage := HandleExternalAPIs(city, forecastKey, indexKey)
 
@@ -68,7 +68,7 @@ func HandleRequest(context *gin.Context) {
 	if err != nil {
 		fmt.Printf("parsing html error")
 	}
-	context.Data(http.StatusOK, "text/html; charset=utf-8", html)
+	context.Data(http.StatusOK, config.TextHTML, html)
 }
 
 func HandleExternalAPIs(city, forecastKey, indexKey string) (*ResponseWeather, *api_errors.ErrorPage) {

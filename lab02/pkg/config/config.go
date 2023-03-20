@@ -14,4 +14,16 @@ const (
 	Localhost   = "localhost:8080"
 	M3OURL      = "https://api.m3o.com/v1/weather/Forecast"
 	UVURL       = "https://api.openuv.io/api/v1/forecast"
+
+	QueryCity     = "city"
+	QueryForecast = "forecast"
+	QueryIndex    = "index"
+	Lat           = "lat"
+	Lng           = "lng"
+
+	TextHTML               = "text/html; charset=utf-8"
+	XAccessToken           = "x-access-token"
+	ContentType            = "Content-Type"
+	ContentApplicationJson = "application/json"
+	Authorization          = "Authorization"
 )

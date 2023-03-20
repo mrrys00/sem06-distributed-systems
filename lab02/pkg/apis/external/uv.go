@@ -42,11 +42,11 @@ func HandleOpenUV(lat, lng *float64, indexKey string) (*ResponseOpenUV, *api_err
 	}
 
 	q := req.URL.Query()
-	q.Add("lat", fmt.Sprintf("%v", *lat))
-	q.Add("lng", fmt.Sprintf("%v", *lng))
+	q.Add(config.Lat, fmt.Sprintf("%v", *lat))
+	q.Add(config.Lng, fmt.Sprintf("%v", *lng))
 	req.URL.RawQuery = q.Encode()
 
-	req.Header.Set("x-access-token", indexKey)
+	req.Header.Set(config.XAccessToken, indexKey)
 	resp, err := myClient.Do(req)
 	if err != nil {
 		fmt.Printf("Response error: %+v\n", err)

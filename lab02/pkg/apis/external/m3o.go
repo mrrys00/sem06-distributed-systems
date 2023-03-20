@@ -80,8 +80,8 @@ func HandleM3O(city, forecastKey string) (*ResponseM3O, *api_errors.ErrorPage) {
 	if err != nil {
 		fmt.Printf("Request error: %+v\n", err)
 	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", forecastKey))
+	req.Header.Set(config.ContentType, config.ContentApplicationJson)
+	req.Header.Set(config.Authorization, fmt.Sprintf("Bearer %s", forecastKey))
 	resp, err := myClient.Do(req)
 	if err != nil {
 		fmt.Printf("Response error: %+v\n", err)
