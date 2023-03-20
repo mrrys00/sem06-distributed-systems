@@ -4,7 +4,7 @@ all: clean prepare main run
 
 .PHONY: clean
 clean:
-	rm ./service
+	rm -f ./service
 
 .PHONY: prepare
 prepare:
