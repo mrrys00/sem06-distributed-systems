@@ -12,6 +12,8 @@ import (
 	"net/http"
 )
 
+var db []*ResponseWeather
+
 type ResponseWeather struct {
 	Location  string                  `json:"location"`
 	Region    string                  `json:"region"`
@@ -60,6 +62,7 @@ func HandleRequest(context *gin.Context) {
 	fmt.Println(city + " " + forecastKey + " " + indexKey)
 	resp, errorPage := HandleExternalAPIs(city, forecastKey, indexKey)
 
+	db = append(db, resp)
 	if errorPage != nil {
 		context.IndentedJSON(errorPage.StatusCode, errorPage)
 		return
