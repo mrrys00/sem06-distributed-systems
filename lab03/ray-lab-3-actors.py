@@ -29,7 +29,7 @@ import numpy as np
 if ray.is_initialized:
     ray.shutdown()
 # ray.init(logging_level=logging.ERROR)
-ray.init(address='auto', ignore_reinit_error=True, logging_level=logging.ERROR)
+ray.init(ignore_reinit_error=True, logging_level=logging.ERROR)
 
 # Remote class as a stateful actor pattern
 #
@@ -281,20 +281,3 @@ while True :
         # kill the supervisor manually, only for illustration and demo
         ray.kill(sup)
         break
-
-
-# excercise 3
-# 3.0 start remote cluster settings and observe actors in cluster
-# a) make screenshot of dependencies
-# 3.1. Modify the Actor class MethodStateCounter and add/modify methods that return the following:
-# a) - Get number of times an invoker name was called
-# b) - Get a list of values computed by invoker name
-# 3- Get state of all invokers
-# 3.2 Modify method invoke to return a random int value between [5, 25]
-
-# 3.3 Take a look on implement parralel Pi computation
-# based on https://docs.ray.io/en/master/ray-core/examples/highly_parallel.html
-#
-# Implement calculating pi as a combination of actor (which keeps the
-# state of the progress of calculating pi as it approaches its final value)
-# and a task (which computes candidates for pi)
