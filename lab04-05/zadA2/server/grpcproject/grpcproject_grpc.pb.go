@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	GrpcProject_SayHello_FullMethodName = "/GrpcProject/SayHello"
+	GrpcProject_SayHello_FullMethodName      = "/GrpcProject/SayHello"
+	GrpcProject_FetchResponse_FullMethodName = "/GrpcProject/FetchResponse"
 )
 
 // GrpcProjectClient is the client API for GrpcProject service.
@@ -28,6 +29,7 @@ const (
 type GrpcProjectClient interface {
 	// Sends a greeting
 	SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
+	FetchResponse(ctx context.Context, in *Request, opts ...grpc.CallOption) (GrpcProject_FetchResponseClient, error)
 }
 
 type grpcProjectClient struct {
@@ -47,12 +49,45 @@ func (c *grpcProjectClient) SayHello(ctx context.Context, in *HelloRequest, opts
 	return out, nil
 }
 
+func (c *grpcProjectClient) FetchResponse(ctx context.Context, in *Request, opts ...grpc.CallOption) (GrpcProject_FetchResponseClient, error) {
+	stream, err := c.cc.NewStream(ctx, &GrpcProject_ServiceDesc.Streams[0], GrpcProject_FetchResponse_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpcProjectFetchResponseClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type GrpcProject_FetchResponseClient interface {
+	Recv() (*Response, error)
+	grpc.ClientStream
+}
+
+type grpcProjectFetchResponseClient struct {
+	grpc.ClientStream
+}
+
+func (x *grpcProjectFetchResponseClient) Recv() (*Response, error) {
+	m := new(Response)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // GrpcProjectServer is the server API for GrpcProject service.
 // All implementations must embed UnimplementedGrpcProjectServer
 // for forward compatibility
 type GrpcProjectServer interface {
 	// Sends a greeting
 	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
+	FetchResponse(*Request, GrpcProject_FetchResponseServer) error
 	mustEmbedUnimplementedGrpcProjectServer()
 }
 
@@ -62,6 +97,9 @@ type UnimplementedGrpcProjectServer struct {
 
 func (UnimplementedGrpcProjectServer) SayHello(context.Context, *HelloRequest) (*HelloReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SayHello not implemented")
+}
+func (UnimplementedGrpcProjectServer) FetchResponse(*Request, GrpcProject_FetchResponseServer) error {
+	return status.Errorf(codes.Unimplemented, "method FetchResponse not implemented")
 }
 func (UnimplementedGrpcProjectServer) mustEmbedUnimplementedGrpcProjectServer() {}
 
@@ -94,6 +132,27 @@ func _GrpcProject_SayHello_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GrpcProject_FetchResponse_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(Request)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(GrpcProjectServer).FetchResponse(m, &grpcProjectFetchResponseServer{stream})
+}
+
+type GrpcProject_FetchResponseServer interface {
+	Send(*Response) error
+	grpc.ServerStream
+}
+
+type grpcProjectFetchResponseServer struct {
+	grpc.ServerStream
+}
+
+func (x *grpcProjectFetchResponseServer) Send(m *Response) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // GrpcProject_ServiceDesc is the grpc.ServiceDesc for GrpcProject service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -106,6 +165,12 @@ var GrpcProject_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _GrpcProject_SayHello_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "FetchResponse",
+			Handler:       _GrpcProject_FetchResponse_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "grpcproject.proto",
 }
