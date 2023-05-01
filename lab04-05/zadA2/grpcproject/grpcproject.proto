@@ -21,9 +21,13 @@ message HelloReply {
 }
 
 message Request {
-  int32 id = 1;
+    int32 id = 1;       // to be deprecated
+    int32 time_mod = 1;
 }
 
 message Response {
-  string result = 1;
+    string result = 1;  // to be deprecated
+    string message = 1;
+    int32 time = 1;
+    repeated int32 times = 8;
 }
