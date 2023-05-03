@@ -13,5 +13,12 @@ proto:
 	mkdir -p $(grpcproject_path)
 	python -m grpc_tools.protoc -I	../$(grpcproject_path) --python_out=. --pyi_out=. --grpc_python_out=.   ../$(grpcproject_path)grpcproject.proto
 
-run:
-	python3 client.py
+run_client_0:
+	python3 client.py 0
+
+run_client_1:
+	python3 client.py 1
+
+run_client_2:
+	python3 client.py 2
+

@@ -19,17 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	GrpcProject_SayHello_FullMethodName      = "/GrpcProject/SayHello"
-	GrpcProject_FetchResponse_FullMethodName = "/GrpcProject/FetchResponse"
+	GrpcProject_Subscribe_FullMethodName = "/GrpcProject/Subscribe"
 )
 
 // GrpcProjectClient is the client API for GrpcProject service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GrpcProjectClient interface {
-	// Sends a greeting
-	SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
-	FetchResponse(ctx context.Context, in *Request, opts ...grpc.CallOption) (GrpcProject_FetchResponseClient, error)
+	Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (GrpcProject_SubscribeClient, error)
 }
 
 type grpcProjectClient struct {
@@ -40,21 +37,12 @@ func NewGrpcProjectClient(cc grpc.ClientConnInterface) GrpcProjectClient {
 	return &grpcProjectClient{cc}
 }
 
-func (c *grpcProjectClient) SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error) {
-	out := new(HelloReply)
-	err := c.cc.Invoke(ctx, GrpcProject_SayHello_FullMethodName, in, out, opts...)
+func (c *grpcProjectClient) Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (GrpcProject_SubscribeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &GrpcProject_ServiceDesc.Streams[0], GrpcProject_Subscribe_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
-}
-
-func (c *grpcProjectClient) FetchResponse(ctx context.Context, in *Request, opts ...grpc.CallOption) (GrpcProject_FetchResponseClient, error) {
-	stream, err := c.cc.NewStream(ctx, &GrpcProject_ServiceDesc.Streams[0], GrpcProject_FetchResponse_FullMethodName, opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &grpcProjectFetchResponseClient{stream}
+	x := &grpcProjectSubscribeClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -64,17 +52,17 @@ func (c *grpcProjectClient) FetchResponse(ctx context.Context, in *Request, opts
 	return x, nil
 }
 
-type GrpcProject_FetchResponseClient interface {
-	Recv() (*Response, error)
+type GrpcProject_SubscribeClient interface {
+	Recv() (*Notification, error)
 	grpc.ClientStream
 }
 
-type grpcProjectFetchResponseClient struct {
+type grpcProjectSubscribeClient struct {
 	grpc.ClientStream
 }
 
-func (x *grpcProjectFetchResponseClient) Recv() (*Response, error) {
-	m := new(Response)
+func (x *grpcProjectSubscribeClient) Recv() (*Notification, error) {
+	m := new(Notification)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -85,9 +73,7 @@ func (x *grpcProjectFetchResponseClient) Recv() (*Response, error) {
 // All implementations must embed UnimplementedGrpcProjectServer
 // for forward compatibility
 type GrpcProjectServer interface {
-	// Sends a greeting
-	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
-	FetchResponse(*Request, GrpcProject_FetchResponseServer) error
+	Subscribe(*SubscribeRequest, GrpcProject_SubscribeServer) error
 	mustEmbedUnimplementedGrpcProjectServer()
 }
 
@@ -95,11 +81,8 @@ type GrpcProjectServer interface {
 type UnimplementedGrpcProjectServer struct {
 }
 
-func (UnimplementedGrpcProjectServer) SayHello(context.Context, *HelloRequest) (*HelloReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SayHello not implemented")
-}
-func (UnimplementedGrpcProjectServer) FetchResponse(*Request, GrpcProject_FetchResponseServer) error {
-	return status.Errorf(codes.Unimplemented, "method FetchResponse not implemented")
+func (UnimplementedGrpcProjectServer) Subscribe(*SubscribeRequest, GrpcProject_SubscribeServer) error {
+	return status.Errorf(codes.Unimplemented, "method Subscribe not implemented")
 }
 func (UnimplementedGrpcProjectServer) mustEmbedUnimplementedGrpcProjectServer() {}
 
@@ -114,42 +97,24 @@ func RegisterGrpcProjectServer(s grpc.ServiceRegistrar, srv GrpcProjectServer) {
 	s.RegisterService(&GrpcProject_ServiceDesc, srv)
 }
 
-func _GrpcProject_SayHello_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HelloRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GrpcProjectServer).SayHello(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: GrpcProject_SayHello_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GrpcProjectServer).SayHello(ctx, req.(*HelloRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GrpcProject_FetchResponse_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(Request)
+func _GrpcProject_Subscribe_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(SubscribeRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(GrpcProjectServer).FetchResponse(m, &grpcProjectFetchResponseServer{stream})
+	return srv.(GrpcProjectServer).Subscribe(m, &grpcProjectSubscribeServer{stream})
 }
 
-type GrpcProject_FetchResponseServer interface {
-	Send(*Response) error
+type GrpcProject_SubscribeServer interface {
+	Send(*Notification) error
 	grpc.ServerStream
 }
 
-type grpcProjectFetchResponseServer struct {
+type grpcProjectSubscribeServer struct {
 	grpc.ServerStream
 }
 
-func (x *grpcProjectFetchResponseServer) Send(m *Response) error {
+func (x *grpcProjectSubscribeServer) Send(m *Notification) error {
 	return x.ServerStream.SendMsg(m)
 }
 
@@ -159,16 +124,11 @@ func (x *grpcProjectFetchResponseServer) Send(m *Response) error {
 var GrpcProject_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "GrpcProject",
 	HandlerType: (*GrpcProjectServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "SayHello",
-			Handler:    _GrpcProject_SayHello_Handler,
-		},
-	},
+	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "FetchResponse",
-			Handler:       _GrpcProject_FetchResponse_Handler,
+			StreamName:    "Subscribe",
+			Handler:       _GrpcProject_Subscribe_Handler,
 			ServerStreams: true,
 		},
 	},

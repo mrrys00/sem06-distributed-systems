@@ -20,17 +20,66 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// The request message containing the user's name.
-type HelloRequest struct {
+type TestEnum int32
+
+const (
+	TestEnum_test1 TestEnum = 0
+	TestEnum_test2 TestEnum = 1
+	TestEnum_test3 TestEnum = 2
+)
+
+// Enum value maps for TestEnum.
+var (
+	TestEnum_name = map[int32]string{
+		0: "test1",
+		1: "test2",
+		2: "test3",
+	}
+	TestEnum_value = map[string]int32{
+		"test1": 0,
+		"test2": 1,
+		"test3": 2,
+	}
+)
+
+func (x TestEnum) Enum() *TestEnum {
+	p := new(TestEnum)
+	*p = x
+	return p
+}
+
+func (x TestEnum) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (TestEnum) Descriptor() protoreflect.EnumDescriptor {
+	return file_grpcproject_proto_enumTypes[0].Descriptor()
+}
+
+func (TestEnum) Type() protoreflect.EnumType {
+	return &file_grpcproject_proto_enumTypes[0]
+}
+
+func (x TestEnum) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use TestEnum.Descriptor instead.
+func (TestEnum) EnumDescriptor() ([]byte, []int) {
+	return file_grpcproject_proto_rawDescGZIP(), []int{0}
+}
+
+type SubscribeRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	SubscribtionId int32  `protobuf:"varint,1,opt,name=subscribtion_id,json=subscribtionId,proto3" json:"subscribtion_id,omitempty"`
+	Name           string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 }
 
-func (x *HelloRequest) Reset() {
-	*x = HelloRequest{}
+func (x *SubscribeRequest) Reset() {
+	*x = SubscribeRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_grpcproject_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -38,13 +87,13 @@ func (x *HelloRequest) Reset() {
 	}
 }
 
-func (x *HelloRequest) String() string {
+func (x *SubscribeRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*HelloRequest) ProtoMessage() {}
+func (*SubscribeRequest) ProtoMessage() {}
 
-func (x *HelloRequest) ProtoReflect() protoreflect.Message {
+func (x *SubscribeRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_grpcproject_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -56,29 +105,39 @@ func (x *HelloRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use HelloRequest.ProtoReflect.Descriptor instead.
-func (*HelloRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use SubscribeRequest.ProtoReflect.Descriptor instead.
+func (*SubscribeRequest) Descriptor() ([]byte, []int) {
 	return file_grpcproject_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *HelloRequest) GetName() string {
+func (x *SubscribeRequest) GetSubscribtionId() int32 {
+	if x != nil {
+		return x.SubscribtionId
+	}
+	return 0
+}
+
+func (x *SubscribeRequest) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-// The response message containing the greetings
-type HelloReply struct {
+type Notification struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Message string `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	SubscribtionId int32    `protobuf:"varint,1,opt,name=subscribtion_id,json=subscribtionId,proto3" json:"subscribtion_id,omitempty"`
+	Message        string   `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Time           int32    `protobuf:"varint,3,opt,name=time,proto3" json:"time,omitempty"`
+	Times          []int32  `protobuf:"varint,4,rep,packed,name=times,proto3" json:"times,omitempty"`
+	TestEnum       TestEnum `protobuf:"varint,5,opt,name=test_enum,json=testEnum,proto3,enum=TestEnum" json:"test_enum,omitempty"`
 }
 
-func (x *HelloReply) Reset() {
-	*x = HelloReply{}
+func (x *Notification) Reset() {
+	*x = Notification{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_grpcproject_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -86,13 +145,13 @@ func (x *HelloReply) Reset() {
 	}
 }
 
-func (x *HelloReply) String() string {
+func (x *Notification) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*HelloReply) ProtoMessage() {}
+func (*Notification) ProtoMessage() {}
 
-func (x *HelloReply) ProtoReflect() protoreflect.Message {
+func (x *Notification) ProtoReflect() protoreflect.Message {
 	mi := &file_grpcproject_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -104,133 +163,75 @@ func (x *HelloReply) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use HelloReply.ProtoReflect.Descriptor instead.
-func (*HelloReply) Descriptor() ([]byte, []int) {
+// Deprecated: Use Notification.ProtoReflect.Descriptor instead.
+func (*Notification) Descriptor() ([]byte, []int) {
 	return file_grpcproject_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *HelloReply) GetMessage() string {
+func (x *Notification) GetSubscribtionId() int32 {
+	if x != nil {
+		return x.SubscribtionId
+	}
+	return 0
+}
+
+func (x *Notification) GetMessage() string {
 	if x != nil {
 		return x.Message
 	}
 	return ""
 }
 
-type Request struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id int32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-}
-
-func (x *Request) Reset() {
-	*x = Request{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_grpcproject_proto_msgTypes[2]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *Request) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Request) ProtoMessage() {}
-
-func (x *Request) ProtoReflect() protoreflect.Message {
-	mi := &file_grpcproject_proto_msgTypes[2]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Request.ProtoReflect.Descriptor instead.
-func (*Request) Descriptor() ([]byte, []int) {
-	return file_grpcproject_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *Request) GetId() int32 {
+func (x *Notification) GetTime() int32 {
 	if x != nil {
-		return x.Id
+		return x.Time
 	}
 	return 0
 }
 
-type Response struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Result string `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
-}
-
-func (x *Response) Reset() {
-	*x = Response{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_grpcproject_proto_msgTypes[3]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *Response) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Response) ProtoMessage() {}
-
-func (x *Response) ProtoReflect() protoreflect.Message {
-	mi := &file_grpcproject_proto_msgTypes[3]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Response.ProtoReflect.Descriptor instead.
-func (*Response) Descriptor() ([]byte, []int) {
-	return file_grpcproject_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *Response) GetResult() string {
+func (x *Notification) GetTimes() []int32 {
 	if x != nil {
-		return x.Result
+		return x.Times
 	}
-	return ""
+	return nil
+}
+
+func (x *Notification) GetTestEnum() TestEnum {
+	if x != nil {
+		return x.TestEnum
+	}
+	return TestEnum_test1
 }
 
 var File_grpcproject_proto protoreflect.FileDescriptor
 
 var file_grpcproject_proto_rawDesc = []byte{
 	0x0a, 0x11, 0x67, 0x72, 0x70, 0x63, 0x70, 0x72, 0x6f, 0x6a, 0x65, 0x63, 0x74, 0x2e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x22, 0x22, 0x0a, 0x0c, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x26, 0x0a, 0x0a, 0x48, 0x65, 0x6c, 0x6c, 0x6f,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22,
-	0x19, 0x0a, 0x07, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x02, 0x69, 0x64, 0x22, 0x22, 0x0a, 0x08, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x32, 0x61,
-	0x0a, 0x0b, 0x47, 0x72, 0x70, 0x63, 0x50, 0x72, 0x6f, 0x6a, 0x65, 0x63, 0x74, 0x12, 0x28, 0x0a,
-	0x08, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x12, 0x0d, 0x2e, 0x48, 0x65, 0x6c, 0x6c,
-	0x6f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0b, 0x2e, 0x48, 0x65, 0x6c, 0x6c, 0x6f,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x28, 0x0a, 0x0d, 0x46, 0x65, 0x74, 0x63, 0x68,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x08, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x09, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x30,
-	0x01, 0x42, 0x0f, 0x5a, 0x0d, 0x2e, 0x2f, 0x67, 0x72, 0x70, 0x63, 0x70, 0x72, 0x6f, 0x6a, 0x65,
-	0x63, 0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x74, 0x6f, 0x22, 0x4f, 0x0a, 0x10, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x62, 0x65,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x27, 0x0a, 0x0f, 0x73, 0x75, 0x62, 0x73, 0x63,
+	0x72, 0x69, 0x62, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05,
+	0x52, 0x0e, 0x73, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x62, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64,
+	0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04,
+	0x6e, 0x61, 0x6d, 0x65, 0x22, 0xa3, 0x01, 0x0a, 0x0c, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x27, 0x0a, 0x0f, 0x73, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69,
+	0x62, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0e,
+	0x73, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x62, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x12, 0x18,
+	0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x69, 0x6d, 0x65,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x74, 0x69, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05,
+	0x74, 0x69, 0x6d, 0x65, 0x73, 0x18, 0x04, 0x20, 0x03, 0x28, 0x05, 0x52, 0x05, 0x74, 0x69, 0x6d,
+	0x65, 0x73, 0x12, 0x26, 0x0a, 0x09, 0x74, 0x65, 0x73, 0x74, 0x5f, 0x65, 0x6e, 0x75, 0x6d, 0x18,
+	0x05, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x09, 0x2e, 0x54, 0x65, 0x73, 0x74, 0x45, 0x6e, 0x75, 0x6d,
+	0x52, 0x08, 0x74, 0x65, 0x73, 0x74, 0x45, 0x6e, 0x75, 0x6d, 0x2a, 0x2b, 0x0a, 0x08, 0x54, 0x65,
+	0x73, 0x74, 0x45, 0x6e, 0x75, 0x6d, 0x12, 0x09, 0x0a, 0x05, 0x74, 0x65, 0x73, 0x74, 0x31, 0x10,
+	0x00, 0x12, 0x09, 0x0a, 0x05, 0x74, 0x65, 0x73, 0x74, 0x32, 0x10, 0x01, 0x12, 0x09, 0x0a, 0x05,
+	0x74, 0x65, 0x73, 0x74, 0x33, 0x10, 0x02, 0x32, 0x40, 0x0a, 0x0b, 0x47, 0x72, 0x70, 0x63, 0x50,
+	0x72, 0x6f, 0x6a, 0x65, 0x63, 0x74, 0x12, 0x31, 0x0a, 0x09, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72,
+	0x69, 0x62, 0x65, 0x12, 0x11, 0x2e, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x62, 0x65, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0d, 0x2e, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x00, 0x30, 0x01, 0x42, 0x0f, 0x5a, 0x0d, 0x2e, 0x2f, 0x67,
+	0x72, 0x70, 0x63, 0x70, 0x72, 0x6f, 0x6a, 0x65, 0x63, 0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (
@@ -245,23 +246,22 @@ func file_grpcproject_proto_rawDescGZIP() []byte {
 	return file_grpcproject_proto_rawDescData
 }
 
-var file_grpcproject_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_grpcproject_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_grpcproject_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_grpcproject_proto_goTypes = []interface{}{
-	(*HelloRequest)(nil), // 0: HelloRequest
-	(*HelloReply)(nil),   // 1: HelloReply
-	(*Request)(nil),      // 2: Request
-	(*Response)(nil),     // 3: Response
+	(TestEnum)(0),            // 0: TestEnum
+	(*SubscribeRequest)(nil), // 1: SubscribeRequest
+	(*Notification)(nil),     // 2: Notification
 }
 var file_grpcproject_proto_depIdxs = []int32{
-	0, // 0: GrpcProject.SayHello:input_type -> HelloRequest
-	2, // 1: GrpcProject.FetchResponse:input_type -> Request
-	1, // 2: GrpcProject.SayHello:output_type -> HelloReply
-	3, // 3: GrpcProject.FetchResponse:output_type -> Response
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: Notification.test_enum:type_name -> TestEnum
+	1, // 1: GrpcProject.Subscribe:input_type -> SubscribeRequest
+	2, // 2: GrpcProject.Subscribe:output_type -> Notification
+	2, // [2:3] is the sub-list for method output_type
+	1, // [1:2] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_grpcproject_proto_init() }
@@ -271,7 +271,7 @@ func file_grpcproject_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_grpcproject_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*HelloRequest); i {
+			switch v := v.(*SubscribeRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -283,31 +283,7 @@ func file_grpcproject_proto_init() {
 			}
 		}
 		file_grpcproject_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*HelloReply); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_grpcproject_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Request); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_grpcproject_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Response); i {
+			switch v := v.(*Notification); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -324,13 +300,14 @@ func file_grpcproject_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_grpcproject_proto_rawDesc,
-			NumEnums:      0,
-			NumMessages:   4,
+			NumEnums:      1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_grpcproject_proto_goTypes,
 		DependencyIndexes: file_grpcproject_proto_depIdxs,
+		EnumInfos:         file_grpcproject_proto_enumTypes,
 		MessageInfos:      file_grpcproject_proto_msgTypes,
 	}.Build()
 	File_grpcproject_proto = out.File

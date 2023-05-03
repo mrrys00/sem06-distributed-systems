@@ -2,32 +2,30 @@ syntax = "proto3";
 
 option go_package = "./grpcproject";
 
-// The service definition.
 service GrpcProject {
-    // Sends a greeting
-    rpc SayHello (HelloRequest) returns (HelloReply) {}
-
-    rpc FetchResponse (Request) returns (stream Response) {}
-}
-  
-// The request message containing the user's name.
-message HelloRequest {
-    string name = 1;
-}
-  
-// The response message containing the greetings
-message HelloReply {
-    string message = 1;
+    rpc Subscribe (SubscribeRequest) returns (stream Notification) {}
+    // rpc Unsubscribe (UnsubscribeRequest) returns () {}
 }
 
-message Request {
-    int32 id = 1;       // to be deprecated
-    int32 time_mod = 1;
+enum TestEnum {
+    test1 = 0;
+    test2 = 1;
+    test3 = 2;
 }
 
-message Response {
-    string result = 1;  // to be deprecated
-    string message = 1;
-    int32 time = 1;
-    repeated int32 times = 8;
+message SubscribeRequest {
+    int32 subscribtion_id = 1;
+    string name = 2;
 }
+
+message Notification {
+    int32 subscribtion_id = 1;
+    string message = 2;
+    int32 time = 3;
+    repeated int32 times = 4;
+    TestEnum test_enum = 5;
+}
+
+// message UnsubscribeRequest {
+//     int32 subscribtion_id = 1;
+// }

@@ -1,11 +1,14 @@
 package main
 
 import (
-	context "context"
-	"fmt"
+	// context "context"
+	// "fmt"
 	"log"
+	"math"
 	"net"
 	"sync"
+
+	// "sync"
 	"time"
 
 	"grpcproject/grpcproject"
@@ -13,48 +16,138 @@ import (
 	"google.golang.org/grpc"
 )
 
-// We define a server struct that implements the server interface. 🥳🥳🥳
+var (
+	runningTime   = int(time.Now().Unix())
+	definedEvents [3]*notification
+	clients       map[string][]grpcproject.Notification
+)
+
 type server struct {
 	grpcproject.UnimplementedGrpcProjectServer
 }
 
-// We implement the SayHello method of the server interface. 🥳🥳🥳
-func (s *server) SayHello(ctx context.Context, in *grpcproject.HelloRequest) (*grpcproject.HelloReply, error) {
-	fmt.Printf("Recived message: %s\n", in.GetName())
-	return &grpcproject.HelloReply{Message: "Hello, " + in.GetName()}, nil
+type notification struct {
+	SubscribtionId int32
+	Message        string
+	Time           int32
+	Times          []int32
+	TestEnum       *grpcproject.TestEnum
 }
 
-func (s *server) FetchResponse(in *grpcproject.Request, srv grpcproject.GrpcProject_FetchResponseServer) error {
+// func (s *server) SayHello(ctx context.Context, in *grpcproject.HelloRequest) (*grpcproject.HelloReply, error) {
+// 	fmt.Printf("Recived message: %s\n", in.GetName())
+// 	return &grpcproject.HelloReply{Message: "Hello, " + in.GetName()}, nil
+// }
 
-	log.Printf("fetch response for id : %d", in.Id)
+func runNotification(
+	in *grpcproject.SubscribeRequest,
+	srv grpcproject.GrpcProject_SubscribeServer,
+	wg *sync.WaitGroup,
+	times []int32,
+	event notification,
+) {
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		resp := grpcproject.Notification{
+			SubscribtionId: event.SubscribtionId,
+			Message:        event.Message,
+			Time:           event.Time,
+			Times:          times,
+			TestEnum:       *event.TestEnum,
+		}
+		if err := srv.Send(&resp); err != nil {
+			log.Printf("send error %v", err)
+			clients[in.Name] = append(clients[in.Name], resp)
+		}
+	}()
+}
 
+func (s *server) Subscribe(in *grpcproject.SubscribeRequest, srv grpcproject.GrpcProject_SubscribeServer) error {
+
+	log.Printf("Starting new client sub for ID: %d at %d\n", in.SubscribtionId, runningTime)
+
+	var event = definedEvents[in.SubscribtionId]
+	var clientName = in.Name
+	var times []int32
 	var wg sync.WaitGroup
-	for i := 0; i < 20; i++ {
-		wg.Add(1)
-		go func(count int64) {		// 
-			defer wg.Done()
-			time.Sleep(time.Duration(count) * time.Second)
-			resp := grpcproject.Response{Result: fmt.Sprintf("Request #%d For Id:%d", count, in.Id)}
+	var oldRunningTime = 0
+	log.Printf("clients %v", clients)
+	clients[clientName] = []grpcproject.Notification{}
+
+	for {
+		if len(clients[clientName]) > 0 {
+			resp := clients[clientName][0]
 			if err := srv.Send(&resp); err != nil {
 				log.Printf("send error %v", err)
+				clients[clientName] = append(clients[clientName], resp)
+			} else {
+				clients[clientName] = append(clients[clientName][:0], clients[clientName][1:]...)
 			}
-			log.Printf("finishing request number : %d", count)
-		}(int64(i))
+		}
+		if runningTime%int(event.Time) == 0 && oldRunningTime != runningTime {
+			log.Printf("Trying to send running time %v on subscription %v to client %v\n", runningTime, in.SubscribtionId, clientName)
+			times = append(times, int32(runningTime))
+			runNotification(in, srv, &wg, times, *event)
+			oldRunningTime = runningTime
+			// if unsubscribe
+			// then break
+		}
 	}
+
+	// log.Printf("fetch response for id : %d, %d", in.Id, in.TimeMod)
+
+	//var wg sync.WaitGroup
+	//for i := 0; i < 20; i++ {
+	//	wg.Add(1)
+	//	go func(count int64) { //
+	//		defer wg.Done()
+	//		time.Sleep(time.Duration(count) * time.Second)
+	//		resp := grpcproject.Response{Result: fmt.Sprintf("Request #%d For Id:%d", count, in.Id)}
+	//		if err := srv.Send(&resp); err != nil {
+	//			log.Printf("send error %v", err)
+	//		}
+	//		log.Printf("finishing request number : %d", count)
+	//	}(int64(i))
+	//}
 
 	wg.Wait()
 	return nil
 }
 
+func newNotification(SubscribtionId int32, Message string, Time int32, Times []int32, TestEnum *grpcproject.TestEnum) *notification {
+	return &notification{
+		SubscribtionId,
+		Message,
+		Time,
+		Times,
+		TestEnum,
+	}
+}
+
 func main() {
 	// based on https://itnext.io/build-grpc-server-with-golang-go-step-by-step-b3f5abcf9e0e
-	println("gRPC server tutorial in Go")
+	clients = make(map[string][]grpcproject.Notification)
+
+	log.Println("defining events")
+	definedEvents[0] = newNotification(0, "event0", int32(math.Pow(2.0, 0)), []int32{}, new(grpcproject.TestEnum))
+	definedEvents[1] = newNotification(1, "event1", int32(math.Pow(2.0, 1)), []int32{}, new(grpcproject.TestEnum))
+	definedEvents[2] = newNotification(2, "event2", int32(math.Pow(2.0, 2)), []int32{}, new(grpcproject.TestEnum))
 
 	listener, err := net.Listen("tcp", ":9000")
 	if err != nil {
 		panic(err)
 	}
+	log.Println("Start run timer")
+	go func() {
+		for {
+			time.Sleep(1 * time.Second)
+			runningTime = int(time.Now().Unix())
+			log.Println(runningTime)
+		}
+	}()
 
+	log.Println("Starting server …")
 	s := grpc.NewServer()
 	grpcproject.RegisterGrpcProjectServer(s, &server{})
 	if err := s.Serve(listener); err != nil {

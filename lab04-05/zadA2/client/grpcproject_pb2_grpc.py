@@ -6,8 +6,7 @@ import grpcproject_pb2 as grpcproject__pb2
 
 
 class GrpcProjectStub(object):
-    """The service definition.
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
         """Constructor.
@@ -15,30 +14,17 @@ class GrpcProjectStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.SayHello = channel.unary_unary(
-                '/GrpcProject/SayHello',
-                request_serializer=grpcproject__pb2.HelloRequest.SerializeToString,
-                response_deserializer=grpcproject__pb2.HelloReply.FromString,
-                )
-        self.FetchResponse = channel.unary_stream(
-                '/GrpcProject/FetchResponse',
-                request_serializer=grpcproject__pb2.Request.SerializeToString,
-                response_deserializer=grpcproject__pb2.Response.FromString,
+        self.Subscribe = channel.unary_stream(
+                '/GrpcProject/Subscribe',
+                request_serializer=grpcproject__pb2.SubscribeRequest.SerializeToString,
+                response_deserializer=grpcproject__pb2.Notification.FromString,
                 )
 
 
 class GrpcProjectServicer(object):
-    """The service definition.
-    """
+    """Missing associated documentation comment in .proto file."""
 
-    def SayHello(self, request, context):
-        """Sends a greeting
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def FetchResponse(self, request, context):
+    def Subscribe(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -47,15 +33,10 @@ class GrpcProjectServicer(object):
 
 def add_GrpcProjectServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'SayHello': grpc.unary_unary_rpc_method_handler(
-                    servicer.SayHello,
-                    request_deserializer=grpcproject__pb2.HelloRequest.FromString,
-                    response_serializer=grpcproject__pb2.HelloReply.SerializeToString,
-            ),
-            'FetchResponse': grpc.unary_stream_rpc_method_handler(
-                    servicer.FetchResponse,
-                    request_deserializer=grpcproject__pb2.Request.FromString,
-                    response_serializer=grpcproject__pb2.Response.SerializeToString,
+            'Subscribe': grpc.unary_stream_rpc_method_handler(
+                    servicer.Subscribe,
+                    request_deserializer=grpcproject__pb2.SubscribeRequest.FromString,
+                    response_serializer=grpcproject__pb2.Notification.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -65,11 +46,10 @@ def add_GrpcProjectServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class GrpcProject(object):
-    """The service definition.
-    """
+    """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def SayHello(request,
+    def Subscribe(request,
             target,
             options=(),
             channel_credentials=None,
@@ -79,25 +59,8 @@ class GrpcProject(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/GrpcProject/SayHello',
-            grpcproject__pb2.HelloRequest.SerializeToString,
-            grpcproject__pb2.HelloReply.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def FetchResponse(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/GrpcProject/FetchResponse',
-            grpcproject__pb2.Request.SerializeToString,
-            grpcproject__pb2.Response.FromString,
+        return grpc.experimental.unary_stream(request, target, '/GrpcProject/Subscribe',
+            grpcproject__pb2.SubscribeRequest.SerializeToString,
+            grpcproject__pb2.Notification.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

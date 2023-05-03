@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x11grpcproject.proto\"\x1c\n\x0cHelloRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"\x1d\n\nHelloReply\x12\x0f\n\x07message\x18\x01 \x01(\t\"\x15\n\x07Request\x12\n\n\x02id\x18\x01 \x01(\x05\"\x1a\n\x08Response\x12\x0e\n\x06result\x18\x01 \x01(\t2a\n\x0bGrpcProject\x12(\n\x08SayHello\x12\r.HelloRequest\x1a\x0b.HelloReply\"\x00\x12(\n\rFetchResponse\x12\x08.Request\x1a\t.Response\"\x00\x30\x01\x42\x0fZ\r./grpcprojectb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x11grpcproject.proto\"9\n\x10SubscribeRequest\x12\x17\n\x0fsubscribtion_id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\"s\n\x0cNotification\x12\x17\n\x0fsubscribtion_id\x18\x01 \x01(\x05\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x0c\n\x04time\x18\x03 \x01(\x05\x12\r\n\x05times\x18\x04 \x03(\x05\x12\x1c\n\ttest_enum\x18\x05 \x01(\x0e\x32\t.TestEnum*+\n\x08TestEnum\x12\t\n\x05test1\x10\x00\x12\t\n\x05test2\x10\x01\x12\t\n\x05test3\x10\x02\x32@\n\x0bGrpcProject\x12\x31\n\tSubscribe\x12\x11.SubscribeRequest\x1a\r.Notification\"\x00\x30\x01\x42\x0fZ\r./grpcprojectb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'grpcproject_pb2', globals())
@@ -21,14 +21,12 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'Z\r./grpcproject'
-  _HELLOREQUEST._serialized_start=21
-  _HELLOREQUEST._serialized_end=49
-  _HELLOREPLY._serialized_start=51
-  _HELLOREPLY._serialized_end=80
-  _REQUEST._serialized_start=82
-  _REQUEST._serialized_end=103
-  _RESPONSE._serialized_start=105
-  _RESPONSE._serialized_end=131
-  _GRPCPROJECT._serialized_start=133
-  _GRPCPROJECT._serialized_end=230
+  _TESTENUM._serialized_start=197
+  _TESTENUM._serialized_end=240
+  _SUBSCRIBEREQUEST._serialized_start=21
+  _SUBSCRIBEREQUEST._serialized_end=78
+  _NOTIFICATION._serialized_start=80
+  _NOTIFICATION._serialized_end=195
+  _GRPCPROJECT._serialized_start=242
+  _GRPCPROJECT._serialized_end=306
 # @@protoc_insertion_point(module_scope)
