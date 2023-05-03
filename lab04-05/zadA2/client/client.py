@@ -21,7 +21,7 @@ def handler(signum, frame):
 
 signal.signal(signal.SIGINT, handler)
 
-async def run(id_to_subscribe: str, client_name: str) -> None:
+async def run_stream(id_to_subscribe: str, client_name: str) -> None:
     async with grpc.aio.insecure_channel("localhost:9000") as channel:
         stub = grpcproject_pb2_grpc.GrpcProjectStub(channel)
         id_ = int(id_to_subscribe)
@@ -34,7 +34,7 @@ async def run(id_to_subscribe: str, client_name: str) -> None:
 
         # Direct read from the stub
         hello_stream = stub.Subscribe(
-            grpcproject_pb2.SubscribeRequest(name=clientName, subscribtion_id=id_))
+            grpcproject_pb2.SubscribeRequest(name=client_name, subscribtion_id=id_))
         while True:
             try:
                 response = await hello_stream.read()
@@ -48,7 +48,7 @@ async def run(id_to_subscribe: str, client_name: str) -> None:
             except:
                 print("waiting for server to start")
                 hello_stream = stub.Subscribe(
-                    grpcproject_pb2.SubscribeRequest(name=clientName, subscribtion_id=id_))
+                    grpcproject_pb2.SubscribeRequest(name=client_name, subscribtion_id=id_))
                 time.sleep(1)
 
 
@@ -57,4 +57,4 @@ if __name__ == '__main__':
     while True:
         subID = int(input("subscription num: "))
         clientName = input("client name: ")
-        asyncio.run(run(subID, clientName))
+        asyncio.run(run_stream(subID, clientName))

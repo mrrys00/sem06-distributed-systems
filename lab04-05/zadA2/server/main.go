@@ -18,8 +18,9 @@ import (
 
 var (
 	runningTime   = int(time.Now().Unix())
-	definedEvents [3]*notification
+	definedEvents [4]*notification
 	clients       map[string][]grpcproject.Notification
+	clientsMutex  sync.Mutex
 )
 
 type server struct {
@@ -58,7 +59,9 @@ func runNotification(
 		}
 		if err := srv.Send(&resp); err != nil {
 			log.Printf("send error %v", err)
+			clientsMutex.Lock()
 			clients[in.Name] = append(clients[in.Name], resp)
+			clientsMutex.Unlock()
 		}
 	}()
 }
@@ -72,19 +75,23 @@ func (s *server) Subscribe(in *grpcproject.SubscribeRequest, srv grpcproject.Grp
 	var times []int32
 	var wg sync.WaitGroup
 	var oldRunningTime = 0
-	log.Printf("clients %v", clients)
+	clientsMutex.Lock()
 	clients[clientName] = []grpcproject.Notification{}
+	clientsMutex.Unlock()
 
 	for {
-		if len(clients[clientName]) > 0 {
-			resp := clients[clientName][0]
-			if err := srv.Send(&resp); err != nil {
-				log.Printf("send error %v", err)
-				clients[clientName] = append(clients[clientName], resp)
-			} else {
-				clients[clientName] = append(clients[clientName][:0], clients[clientName][1:]...)
-			}
-		}
+		//clientsMutex.Lock()
+		//if len(clients[clientName]) > 0 {
+		//	resp := clients[clientName][0]
+		//	if err := srv.Send(&resp); err != nil {
+		//		//log.Printf("send error %v", err)
+		//		clients[clientName] = append(clients[clientName], resp)
+		//	} else {
+		//		clients[clientName] = append(clients[clientName][:0], clients[clientName][1:]...)
+		//	}
+		//}
+		//clientsMutex.Unlock()
+
 		if runningTime%int(event.Time) == 0 && oldRunningTime != runningTime {
 			log.Printf("Trying to send running time %v on subscription %v to client %v\n", runningTime, in.SubscribtionId, clientName)
 			times = append(times, int32(runningTime))
@@ -133,6 +140,7 @@ func main() {
 	definedEvents[0] = newNotification(0, "event0", int32(math.Pow(2.0, 0)), []int32{}, new(grpcproject.TestEnum))
 	definedEvents[1] = newNotification(1, "event1", int32(math.Pow(2.0, 1)), []int32{}, new(grpcproject.TestEnum))
 	definedEvents[2] = newNotification(2, "event2", int32(math.Pow(2.0, 2)), []int32{}, new(grpcproject.TestEnum))
+	definedEvents[3] = newNotification(3, "event2", int32(math.Pow(2.0, 3)), []int32{}, new(grpcproject.TestEnum))
 
 	listener, err := net.Listen("tcp", ":9000")
 	if err != nil {
