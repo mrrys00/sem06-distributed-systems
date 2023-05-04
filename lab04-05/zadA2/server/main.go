@@ -102,22 +102,6 @@ func (s *server) Subscribe(in *grpcproject.SubscribeRequest, srv grpcproject.Grp
 		}
 	}
 
-	// log.Printf("fetch response for id : %d, %d", in.Id, in.TimeMod)
-
-	//var wg sync.WaitGroup
-	//for i := 0; i < 20; i++ {
-	//	wg.Add(1)
-	//	go func(count int64) { //
-	//		defer wg.Done()
-	//		time.Sleep(time.Duration(count) * time.Second)
-	//		resp := grpcproject.Response{Result: fmt.Sprintf("Request #%d For Id:%d", count, in.Id)}
-	//		if err := srv.Send(&resp); err != nil {
-	//			log.Printf("send error %v", err)
-	//		}
-	//		log.Printf("finishing request number : %d", count)
-	//	}(int64(i))
-	//}
-
 	wg.Wait()
 	return nil
 }
