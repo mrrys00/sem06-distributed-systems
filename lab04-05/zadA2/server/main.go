@@ -1,14 +1,11 @@
 package main
 
 import (
-	// context "context"
-	// "fmt"
 	"log"
 	"math"
 	"net"
 	"sync"
 
-	// "sync"
 	"time"
 
 	"grpcproject/grpcproject"
@@ -35,10 +32,6 @@ type notification struct {
 	TestEnum       *grpcproject.TestEnum
 }
 
-// func (s *server) SayHello(ctx context.Context, in *grpcproject.HelloRequest) (*grpcproject.HelloReply, error) {
-// 	fmt.Printf("Recived message: %s\n", in.GetName())
-// 	return &grpcproject.HelloReply{Message: "Hello, " + in.GetName()}, nil
-// }
 
 func runNotification(
 	in *grpcproject.SubscribeRequest,

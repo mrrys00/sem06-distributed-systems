@@ -25,19 +25,23 @@ async def run_stream(id_to_subscribe: str, client_name: str) -> None:
     async with grpc.aio.insecure_channel("localhost:9000") as channel:
         stub = grpcproject_pb2_grpc.GrpcProjectStub(channel)
         id_ = int(id_to_subscribe)
-        # id_ = random.randint(1,5)
-
-        # Read from an async generator
-        # async for response in stub.FetchResponse(
-        #     grpcproject_pb2.Request(id=id_, time_mod=time_mod)):
-        #     print(f"Greeter client received from async generator:\n{response.result}")
 
         # Direct read from the stub
         hello_stream = stub.Subscribe(
             grpcproject_pb2.SubscribeRequest(name=client_name, subscribtion_id=id_))
+        hello_stream2 = stub.Subscribe(
+            grpcproject_pb2.SubscribeRequest(name=client_name, subscribtion_id=2))
         while True:
             try:
                 response = await hello_stream.read()
+                if response != grpc.aio.EOF:
+                    print(f"Event notification recived:\n \
+                            {response.subscribtion_id}\n \
+                            {response.message}\n \
+                            {response.time}\n \
+                            {response.times}\n \
+                            {response.test_enum}\n")
+                response = await hello_stream2.read()
                 if response != grpc.aio.EOF:
                     print(f"Event notification recived:\n \
                             {response.subscribtion_id}\n \
@@ -49,6 +53,8 @@ async def run_stream(id_to_subscribe: str, client_name: str) -> None:
                 print("waiting for server to start")
                 hello_stream = stub.Subscribe(
                     grpcproject_pb2.SubscribeRequest(name=client_name, subscribtion_id=id_))
+                hello_stream2 = stub.Subscribe(
+                    grpcproject_pb2.SubscribeRequest(name=client_name, subscribtion_id=3))
                 time.sleep(1)
 
 
