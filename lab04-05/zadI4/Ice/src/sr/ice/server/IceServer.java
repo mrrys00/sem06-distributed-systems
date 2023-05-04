@@ -10,6 +10,7 @@ package sr.ice.server;
 
 import com.zeroc.Ice.Communicator;
 import com.zeroc.Ice.Identity;
+import com.zeroc.Ice.Object;
 import com.zeroc.Ice.ObjectAdapter;
 
 import static com.zeroc.Ice.Util.initialize;
@@ -25,9 +26,9 @@ public class IceServer
 			communicator = initialize(args);
 			ObjectAdapter adapter = communicator.createObjectAdapter("Adapter1");
 
-			ZadI4 opp = new ZadI4();
+			ZadI4 zadI4 = new ZadI4();
 
-			adapter.add(opp, new Identity("opp1", "opp"));
+			adapter.add((Object) zadI4, new Identity("zadI41", "zadI4"));
 			adapter.activate();
 
 			System.out.println("Działa ale jakim kosztem...");

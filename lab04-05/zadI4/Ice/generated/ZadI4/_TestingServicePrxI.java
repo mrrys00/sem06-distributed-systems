@@ -16,7 +16,7 @@
 package ZadI4;
 
 /** @hidden */
-public class _ExampleServicePrxI extends com.zeroc.Ice._ObjectPrxI implements ExampleServicePrx
+public class _TestingServicePrxI extends com.zeroc.Ice._ObjectPrxI implements TestingServicePrx
 {
     /** @hidden */
     public static final long serialVersionUID = 0L;

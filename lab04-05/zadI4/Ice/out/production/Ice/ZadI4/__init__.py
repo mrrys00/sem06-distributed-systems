@@ -2,9 +2,9 @@
 #
 
 import Ice
-Ice.updateModule("Demo")
+Ice.updateModule("ZadI4")
 
 # Modules:
-import calculator_ice
+import zadi4_ice
 
 # Submodules:

@@ -15,47 +15,42 @@
 
 package ZadI4;
 
-public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
+public interface TestingServicePrx extends com.zeroc.Ice.ObjectPrx
 {
-    default Response OppOperation(Request request)
+    default void TestingOperation(Person person)
     {
-        return OppOperation(request, com.zeroc.Ice.ObjectPrx.noExplicitContext);
+        TestingOperation(person, com.zeroc.Ice.ObjectPrx.noExplicitContext);
     }
 
-    default Response OppOperation(Request request, java.util.Map<String, String> context)
+    default void TestingOperation(Person person, java.util.Map<String, String> context)
     {
-        return _iceI_OppOperationAsync(request, context, true).waitForResponse();
+        _iceI_TestingOperationAsync(person, context, true).waitForResponse();
     }
 
-    default java.util.concurrent.CompletableFuture<Response> OppOperationAsync(Request request)
+    default java.util.concurrent.CompletableFuture<Void> TestingOperationAsync(Person person)
     {
-        return _iceI_OppOperationAsync(request, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+        return _iceI_TestingOperationAsync(person, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
     }
 
-    default java.util.concurrent.CompletableFuture<Response> OppOperationAsync(Request request, java.util.Map<String, String> context)
+    default java.util.concurrent.CompletableFuture<Void> TestingOperationAsync(Person person, java.util.Map<String, String> context)
     {
-        return _iceI_OppOperationAsync(request, context, false);
+        return _iceI_TestingOperationAsync(person, context, false);
     }
 
     /**
      * @hidden
-     * @param iceP_request -
+     * @param iceP_person -
      * @param context -
      * @param sync -
      * @return -
      **/
-    default com.zeroc.IceInternal.OutgoingAsync<Response> _iceI_OppOperationAsync(Request iceP_request, java.util.Map<String, String> context, boolean sync)
+    default com.zeroc.IceInternal.OutgoingAsync<Void> _iceI_TestingOperationAsync(Person iceP_person, java.util.Map<String, String> context, boolean sync)
     {
-        com.zeroc.IceInternal.OutgoingAsync<Response> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "OppOperation", null, sync, null);
-        f.invoke(true, context, null, ostr -> {
-                     ostr.writeValue(iceP_request);
+        com.zeroc.IceInternal.OutgoingAsync<Void> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "TestingOperation", null, sync, null);
+        f.invoke(false, context, null, ostr -> {
+                     ostr.writeValue(iceP_person);
                      ostr.writePendingValues();
-                 }, istr -> {
-                     final com.zeroc.IceInternal.Holder<Response> ret = new com.zeroc.IceInternal.Holder<>();
-                     istr.readValue(v -> ret.value = v, Response.class);
-                     istr.readPendingValues();
-                     return ret.value;
-                 });
+                 }, null);
         return f;
     }
 
@@ -65,9 +60,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @param obj The untyped proxy.
      * @return A proxy for this type, or null if the object does not support this type.
      **/
-    static ExampleServicePrx checkedCast(com.zeroc.Ice.ObjectPrx obj)
+    static TestingServicePrx checkedCast(com.zeroc.Ice.ObjectPrx obj)
     {
-        return com.zeroc.Ice.ObjectPrx._checkedCast(obj, ice_staticId(), ExampleServicePrx.class, _ExampleServicePrxI.class);
+        return com.zeroc.Ice.ObjectPrx._checkedCast(obj, ice_staticId(), TestingServicePrx.class, _TestingServicePrxI.class);
     }
 
     /**
@@ -77,9 +72,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @param context The Context map to send with the invocation.
      * @return A proxy for this type, or null if the object does not support this type.
      **/
-    static ExampleServicePrx checkedCast(com.zeroc.Ice.ObjectPrx obj, java.util.Map<String, String> context)
+    static TestingServicePrx checkedCast(com.zeroc.Ice.ObjectPrx obj, java.util.Map<String, String> context)
     {
-        return com.zeroc.Ice.ObjectPrx._checkedCast(obj, context, ice_staticId(), ExampleServicePrx.class, _ExampleServicePrxI.class);
+        return com.zeroc.Ice.ObjectPrx._checkedCast(obj, context, ice_staticId(), TestingServicePrx.class, _TestingServicePrxI.class);
     }
 
     /**
@@ -89,9 +84,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @param facet The name of the desired facet.
      * @return A proxy for this type, or null if the object does not support this type.
      **/
-    static ExampleServicePrx checkedCast(com.zeroc.Ice.ObjectPrx obj, String facet)
+    static TestingServicePrx checkedCast(com.zeroc.Ice.ObjectPrx obj, String facet)
     {
-        return com.zeroc.Ice.ObjectPrx._checkedCast(obj, facet, ice_staticId(), ExampleServicePrx.class, _ExampleServicePrxI.class);
+        return com.zeroc.Ice.ObjectPrx._checkedCast(obj, facet, ice_staticId(), TestingServicePrx.class, _TestingServicePrxI.class);
     }
 
     /**
@@ -102,9 +97,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @param context The Context map to send with the invocation.
      * @return A proxy for this type, or null if the object does not support this type.
      **/
-    static ExampleServicePrx checkedCast(com.zeroc.Ice.ObjectPrx obj, String facet, java.util.Map<String, String> context)
+    static TestingServicePrx checkedCast(com.zeroc.Ice.ObjectPrx obj, String facet, java.util.Map<String, String> context)
     {
-        return com.zeroc.Ice.ObjectPrx._checkedCast(obj, facet, context, ice_staticId(), ExampleServicePrx.class, _ExampleServicePrxI.class);
+        return com.zeroc.Ice.ObjectPrx._checkedCast(obj, facet, context, ice_staticId(), TestingServicePrx.class, _TestingServicePrxI.class);
     }
 
     /**
@@ -112,9 +107,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @param obj The untyped proxy.
      * @return A proxy for this type.
      **/
-    static ExampleServicePrx uncheckedCast(com.zeroc.Ice.ObjectPrx obj)
+    static TestingServicePrx uncheckedCast(com.zeroc.Ice.ObjectPrx obj)
     {
-        return com.zeroc.Ice.ObjectPrx._uncheckedCast(obj, ExampleServicePrx.class, _ExampleServicePrxI.class);
+        return com.zeroc.Ice.ObjectPrx._uncheckedCast(obj, TestingServicePrx.class, _TestingServicePrxI.class);
     }
 
     /**
@@ -123,9 +118,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @param facet The name of the desired facet.
      * @return A proxy for this type.
      **/
-    static ExampleServicePrx uncheckedCast(com.zeroc.Ice.ObjectPrx obj, String facet)
+    static TestingServicePrx uncheckedCast(com.zeroc.Ice.ObjectPrx obj, String facet)
     {
-        return com.zeroc.Ice.ObjectPrx._uncheckedCast(obj, facet, ExampleServicePrx.class, _ExampleServicePrxI.class);
+        return com.zeroc.Ice.ObjectPrx._uncheckedCast(obj, facet, TestingServicePrx.class, _TestingServicePrxI.class);
     }
 
     /**
@@ -134,9 +129,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy with the specified per-proxy context.
      **/
     @Override
-    default ExampleServicePrx ice_context(java.util.Map<String, String> newContext)
+    default TestingServicePrx ice_context(java.util.Map<String, String> newContext)
     {
-        return (ExampleServicePrx)_ice_context(newContext);
+        return (TestingServicePrx)_ice_context(newContext);
     }
 
     /**
@@ -145,9 +140,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy with the specified adapter ID.
      **/
     @Override
-    default ExampleServicePrx ice_adapterId(String newAdapterId)
+    default TestingServicePrx ice_adapterId(String newAdapterId)
     {
-        return (ExampleServicePrx)_ice_adapterId(newAdapterId);
+        return (TestingServicePrx)_ice_adapterId(newAdapterId);
     }
 
     /**
@@ -156,9 +151,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy with the specified endpoints.
      **/
     @Override
-    default ExampleServicePrx ice_endpoints(com.zeroc.Ice.Endpoint[] newEndpoints)
+    default TestingServicePrx ice_endpoints(com.zeroc.Ice.Endpoint[] newEndpoints)
     {
-        return (ExampleServicePrx)_ice_endpoints(newEndpoints);
+        return (TestingServicePrx)_ice_endpoints(newEndpoints);
     }
 
     /**
@@ -167,9 +162,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy with the specified locator cache timeout.
      **/
     @Override
-    default ExampleServicePrx ice_locatorCacheTimeout(int newTimeout)
+    default TestingServicePrx ice_locatorCacheTimeout(int newTimeout)
     {
-        return (ExampleServicePrx)_ice_locatorCacheTimeout(newTimeout);
+        return (TestingServicePrx)_ice_locatorCacheTimeout(newTimeout);
     }
 
     /**
@@ -178,9 +173,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy with the specified invocation timeout.
      **/
     @Override
-    default ExampleServicePrx ice_invocationTimeout(int newTimeout)
+    default TestingServicePrx ice_invocationTimeout(int newTimeout)
     {
-        return (ExampleServicePrx)_ice_invocationTimeout(newTimeout);
+        return (TestingServicePrx)_ice_invocationTimeout(newTimeout);
     }
 
     /**
@@ -189,9 +184,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy with the specified caching policy.
      **/
     @Override
-    default ExampleServicePrx ice_connectionCached(boolean newCache)
+    default TestingServicePrx ice_connectionCached(boolean newCache)
     {
-        return (ExampleServicePrx)_ice_connectionCached(newCache);
+        return (TestingServicePrx)_ice_connectionCached(newCache);
     }
 
     /**
@@ -200,9 +195,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy with the specified endpoint selection policy.
      **/
     @Override
-    default ExampleServicePrx ice_endpointSelection(com.zeroc.Ice.EndpointSelectionType newType)
+    default TestingServicePrx ice_endpointSelection(com.zeroc.Ice.EndpointSelectionType newType)
     {
-        return (ExampleServicePrx)_ice_endpointSelection(newType);
+        return (TestingServicePrx)_ice_endpointSelection(newType);
     }
 
     /**
@@ -213,9 +208,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy with the specified selection policy.
      **/
     @Override
-    default ExampleServicePrx ice_secure(boolean b)
+    default TestingServicePrx ice_secure(boolean b)
     {
-        return (ExampleServicePrx)_ice_secure(b);
+        return (TestingServicePrx)_ice_secure(b);
     }
 
     /**
@@ -224,9 +219,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy with the specified encoding version.
      **/
     @Override
-    default ExampleServicePrx ice_encodingVersion(com.zeroc.Ice.EncodingVersion e)
+    default TestingServicePrx ice_encodingVersion(com.zeroc.Ice.EncodingVersion e)
     {
-        return (ExampleServicePrx)_ice_encodingVersion(e);
+        return (TestingServicePrx)_ice_encodingVersion(e);
     }
 
     /**
@@ -237,9 +232,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy with the specified selection policy.
      **/
     @Override
-    default ExampleServicePrx ice_preferSecure(boolean b)
+    default TestingServicePrx ice_preferSecure(boolean b)
     {
-        return (ExampleServicePrx)_ice_preferSecure(b);
+        return (TestingServicePrx)_ice_preferSecure(b);
     }
 
     /**
@@ -248,9 +243,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy with the specified router.
      **/
     @Override
-    default ExampleServicePrx ice_router(com.zeroc.Ice.RouterPrx router)
+    default TestingServicePrx ice_router(com.zeroc.Ice.RouterPrx router)
     {
-        return (ExampleServicePrx)_ice_router(router);
+        return (TestingServicePrx)_ice_router(router);
     }
 
     /**
@@ -259,9 +254,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy with the specified locator.
      **/
     @Override
-    default ExampleServicePrx ice_locator(com.zeroc.Ice.LocatorPrx locator)
+    default TestingServicePrx ice_locator(com.zeroc.Ice.LocatorPrx locator)
     {
-        return (ExampleServicePrx)_ice_locator(locator);
+        return (TestingServicePrx)_ice_locator(locator);
     }
 
     /**
@@ -270,9 +265,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy with the specified collocation optimization.
      **/
     @Override
-    default ExampleServicePrx ice_collocationOptimized(boolean b)
+    default TestingServicePrx ice_collocationOptimized(boolean b)
     {
-        return (ExampleServicePrx)_ice_collocationOptimized(b);
+        return (TestingServicePrx)_ice_collocationOptimized(b);
     }
 
     /**
@@ -280,9 +275,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy that uses twoway invocations.
      **/
     @Override
-    default ExampleServicePrx ice_twoway()
+    default TestingServicePrx ice_twoway()
     {
-        return (ExampleServicePrx)_ice_twoway();
+        return (TestingServicePrx)_ice_twoway();
     }
 
     /**
@@ -290,9 +285,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy that uses oneway invocations.
      **/
     @Override
-    default ExampleServicePrx ice_oneway()
+    default TestingServicePrx ice_oneway()
     {
-        return (ExampleServicePrx)_ice_oneway();
+        return (TestingServicePrx)_ice_oneway();
     }
 
     /**
@@ -300,9 +295,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy that uses batch oneway invocations.
      **/
     @Override
-    default ExampleServicePrx ice_batchOneway()
+    default TestingServicePrx ice_batchOneway()
     {
-        return (ExampleServicePrx)_ice_batchOneway();
+        return (TestingServicePrx)_ice_batchOneway();
     }
 
     /**
@@ -310,9 +305,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy that uses datagram invocations.
      **/
     @Override
-    default ExampleServicePrx ice_datagram()
+    default TestingServicePrx ice_datagram()
     {
-        return (ExampleServicePrx)_ice_datagram();
+        return (TestingServicePrx)_ice_datagram();
     }
 
     /**
@@ -320,9 +315,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy that uses batch datagram invocations.
      **/
     @Override
-    default ExampleServicePrx ice_batchDatagram()
+    default TestingServicePrx ice_batchDatagram()
     {
-        return (ExampleServicePrx)_ice_batchDatagram();
+        return (TestingServicePrx)_ice_batchDatagram();
     }
 
     /**
@@ -331,9 +326,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy with the specified compression setting.
      **/
     @Override
-    default ExampleServicePrx ice_compress(boolean co)
+    default TestingServicePrx ice_compress(boolean co)
     {
-        return (ExampleServicePrx)_ice_compress(co);
+        return (TestingServicePrx)_ice_compress(co);
     }
 
     /**
@@ -342,9 +337,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy with the specified timeout.
      **/
     @Override
-    default ExampleServicePrx ice_timeout(int t)
+    default TestingServicePrx ice_timeout(int t)
     {
-        return (ExampleServicePrx)_ice_timeout(t);
+        return (TestingServicePrx)_ice_timeout(t);
     }
 
     /**
@@ -353,9 +348,9 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A proxy with the specified connection ID.
      **/
     @Override
-    default ExampleServicePrx ice_connectionId(String connectionId)
+    default TestingServicePrx ice_connectionId(String connectionId)
     {
-        return (ExampleServicePrx)_ice_connectionId(connectionId);
+        return (TestingServicePrx)_ice_connectionId(connectionId);
     }
 
     /**
@@ -364,13 +359,13 @@ public interface ExampleServicePrx extends com.zeroc.Ice.ObjectPrx
      * @return A fixed proxy bound to the given connection.
      **/
     @Override
-    default ExampleServicePrx ice_fixed(com.zeroc.Ice.Connection connection)
+    default TestingServicePrx ice_fixed(com.zeroc.Ice.Connection connection)
     {
-        return (ExampleServicePrx)_ice_fixed(connection);
+        return (TestingServicePrx)_ice_fixed(connection);
     }
 
     static String ice_staticId()
     {
-        return "::ZadI4::ExampleService";
+        return "::ZadI4::TestingService";
     }
 }

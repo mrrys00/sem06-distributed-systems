@@ -13,17 +13,17 @@
 // </auto-generated>
 //
 
-package OperationsWithOptionals;
+package ZadI4;
 
-public interface ExampleService extends com.zeroc.Ice.Object
+public interface TestingService extends com.zeroc.Ice.Object
 {
-    Response OppOperation(Request request, com.zeroc.Ice.Current current);
+    void TestingOperation(Person person, com.zeroc.Ice.Current current);
 
     /** @hidden */
     static final String[] _iceIds =
     {
         "::Ice::Object",
-        "::ZadI4::ExampleService"
+        "::ZadI4::TestingService"
     };
 
     @Override
@@ -40,7 +40,7 @@ public interface ExampleService extends com.zeroc.Ice.Object
 
     static String ice_staticId()
     {
-        return "::ZadI4::ExampleService";
+        return "::ZadI4::TestingService";
     }
 
     /**
@@ -50,27 +50,23 @@ public interface ExampleService extends com.zeroc.Ice.Object
      * @param current -
      * @return -
     **/
-    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_OppOperation(ExampleService obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_TestingOperation(TestingService obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
     {
         com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
         com.zeroc.Ice.InputStream istr = inS.startReadParams();
-        final com.zeroc.IceInternal.Holder<Request> icePP_request = new com.zeroc.IceInternal.Holder<>();
-        istr.readValue(v -> icePP_request.value = v, Request.class);
+        final com.zeroc.IceInternal.Holder<Person> icePP_person = new com.zeroc.IceInternal.Holder<>();
+        istr.readValue(v -> icePP_person.value = v, Person.class);
         istr.readPendingValues();
         inS.endReadParams();
-        Request iceP_request = icePP_request.value;
-        Response ret = obj.OppOperation(iceP_request, current);
-        com.zeroc.Ice.OutputStream ostr = inS.startWriteParams();
-        ostr.writeValue(ret);
-        ostr.writePendingValues();
-        inS.endWriteParams(ostr);
-        return inS.setResult(ostr);
+        Person iceP_person = icePP_person.value;
+        obj.TestingOperation(iceP_person, current);
+        return inS.setResult(inS.writeEmptyParams());
     }
 
     /** @hidden */
     final static String[] _iceOps =
     {
-        "OppOperation",
+        "TestingOperation",
         "ice_id",
         "ice_ids",
         "ice_isA",
@@ -92,7 +88,7 @@ public interface ExampleService extends com.zeroc.Ice.Object
         {
             case 0:
             {
-                return _iceD_OppOperation(this, in, current);
+                return _iceD_TestingOperation(this, in, current);
             }
             case 1:
             {

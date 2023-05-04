@@ -17,35 +17,44 @@
 from sys import version_info as _version_info_
 import Ice, IcePy
 
-# Start of module OperationsWithOptionals
-_M_OperationsWithOptionals = Ice.openModule('OperationsWithOptionals')
-__name__ = 'OperationsWithOptionals'
+# Start of module ZadI4
+_M_ZadI4 = Ice.openModule('ZadI4')
+__name__ = 'ZadI4'
 
-if 'EEnum' not in _M_OperationsWithOptionals.__dict__:
-    _M_OperationsWithOptionals.EEnum = Ice.createTempClass()
-    class EEnum(Ice.EnumBase):
+if 'Person' not in _M_ZadI4.__dict__:
+    _M_ZadI4.Person = Ice.createTempClass()
+    class Person(Ice.Value):
+        def __init__(self, firstName='', middleName=Ice.Unset, lastName='', birthDate=Ice.Unset):
+            self.firstName = firstName
+            self.middleName = middleName
+            self.lastName = lastName
+            self.birthDate = birthDate
 
-        def __init__(self, _n, _v):
-            Ice.EnumBase.__init__(self, _n, _v)
+        def ice_id(self):
+            return '::ZadI4::Person'
 
-        def valueOf(self, _n):
-            if _n in self._enumerators:
-                return self._enumerators[_n]
-            return None
-        valueOf = classmethod(valueOf)
+        @staticmethod
+        def ice_staticId():
+            return '::ZadI4::Person'
 
-    EEnum.CYAN = EEnum("CYAN", 0)
-    EEnum.YELLOW = EEnum("YELLOW", 1)
-    EEnum.MAGENTA = EEnum("MAGENTA", 2)
-    EEnum._enumerators = { 0:EEnum.CYAN, 1:EEnum.YELLOW, 2:EEnum.MAGENTA }
+        def __str__(self):
+            return IcePy.stringify(self, _M_ZadI4._t_Person)
 
-    _M_OperationsWithOptionals._t_EEnum = IcePy.defineEnum('::OperationsWithOptionals::EEnum', EEnum, (), EEnum._enumerators)
+        __repr__ = __str__
 
-    _M_OperationsWithOptionals.EEnum = EEnum
-    del EEnum
+    _M_ZadI4._t_Person = IcePy.defineValue('::ZadI4::Person', Person, -1, (), False, False, None, (
+        ('firstName', (), IcePy._t_string, False, 0),
+        ('middleName', (), IcePy._t_string, True, 2),
+        ('lastName', (), IcePy._t_string, False, 0),
+        ('birthDate', (), IcePy._t_int, True, 1)
+    ))
+    Person._ice_type = _M_ZadI4._t_Person
 
-if 'NoInput' not in _M_OperationsWithOptionals.__dict__:
-    _M_OperationsWithOptionals.NoInput = Ice.createTempClass()
+    _M_ZadI4.Person = Person
+    del Person
+
+if 'NoInput' not in _M_ZadI4.__dict__:
+    _M_ZadI4.NoInput = Ice.createTempClass()
     class NoInput(Ice.UserException):
         def __init__(self):
             pass
@@ -55,179 +64,75 @@ if 'NoInput' not in _M_OperationsWithOptionals.__dict__:
 
         __repr__ = __str__
 
-        _ice_id = '::OperationsWithOptionals::NoInput'
+        _ice_id = '::ZadI4::NoInput'
 
-    _M_OperationsWithOptionals._t_NoInput = IcePy.defineException('::OperationsWithOptionals::NoInput', NoInput, (), False, None, ())
-    NoInput._ice_type = _M_OperationsWithOptionals._t_NoInput
+    _M_ZadI4._t_NoInput = IcePy.defineException('::ZadI4::NoInput', NoInput, (), False, None, ())
+    NoInput._ice_type = _M_ZadI4._t_NoInput
 
-    _M_OperationsWithOptionals.NoInput = NoInput
+    _M_ZadI4.NoInput = NoInput
     del NoInput
 
-if 'Time' not in _M_OperationsWithOptionals.__dict__:
-    _M_OperationsWithOptionals.Time = Ice.createTempClass()
-    class Time(Ice.Value):
-        def __init__(self, hours=0, minutes=0, seconds=Ice.Unset):
-            self.hours = hours
-            self.minutes = minutes
-            self.seconds = seconds
+_M_ZadI4._t_TestingService = IcePy.defineValue('::ZadI4::TestingService', Ice.Value, -1, (), False, True, None, ())
 
-        def ice_id(self):
-            return '::OperationsWithOptionals::Time'
+if 'TestingServicePrx' not in _M_ZadI4.__dict__:
+    _M_ZadI4.TestingServicePrx = Ice.createTempClass()
+    class TestingServicePrx(Ice.ObjectPrx):
 
-        @staticmethod
-        def ice_staticId():
-            return '::OperationsWithOptionals::Time'
+        def TestingOperation(self, person, context=None):
+            return _M_ZadI4.TestingService._op_TestingOperation.invoke(self, ((person, ), context))
 
-        def __str__(self):
-            return IcePy.stringify(self, _M_OperationsWithOptionals._t_Time)
+        def TestingOperationAsync(self, person, context=None):
+            return _M_ZadI4.TestingService._op_TestingOperation.invokeAsync(self, ((person, ), context))
 
-        __repr__ = __str__
+        def begin_TestingOperation(self, person, _response=None, _ex=None, _sent=None, context=None):
+            return _M_ZadI4.TestingService._op_TestingOperation.begin(self, ((person, ), _response, _ex, _sent, context))
 
-    _M_OperationsWithOptionals._t_Time = IcePy.defineValue('::OperationsWithOptionals::Time', Time, -1, (), False, False, None, (
-        ('hours', (), IcePy._t_int, False, 0),
-        ('minutes', (), IcePy._t_int, False, 0),
-        ('seconds', (), IcePy._t_int, True, 3)
-    ))
-    Time._ice_type = _M_OperationsWithOptionals._t_Time
-
-    _M_OperationsWithOptionals.Time = Time
-    del Time
-
-if 'Request' not in _M_OperationsWithOptionals.__dict__:
-    _M_OperationsWithOptionals.Request = Ice.createTempClass()
-    class Request(Ice.Value):
-        def __init__(self, intArg=0, strArg='', enumArg=_M_OperationsWithOptionals.EEnum.CYAN, timeArg=None, optIntArg=Ice.Unset, optStrArg=Ice.Unset, optEnumArg=Ice.Unset, optTimeArg=Ice.Unset):
-            self.intArg = intArg
-            self.strArg = strArg
-            self.enumArg = enumArg
-            self.timeArg = timeArg
-            self.optIntArg = optIntArg
-            self.optStrArg = optStrArg
-            self.optEnumArg = optEnumArg
-            self.optTimeArg = optTimeArg
-
-        def ice_id(self):
-            return '::OperationsWithOptionals::Request'
-
-        @staticmethod
-        def ice_staticId():
-            return '::OperationsWithOptionals::Request'
-
-        def __str__(self):
-            return IcePy.stringify(self, _M_OperationsWithOptionals._t_Request)
-
-        __repr__ = __str__
-
-    _M_OperationsWithOptionals._t_Request = IcePy.declareValue('::OperationsWithOptionals::Request')
-
-    _M_OperationsWithOptionals._t_Request = IcePy.defineValue('::OperationsWithOptionals::Request', Request, -1, (), False, False, None, (
-        ('intArg', (), IcePy._t_int, False, 0),
-        ('strArg', (), IcePy._t_string, False, 0),
-        ('enumArg', (), _M_OperationsWithOptionals._t_EEnum, False, 0),
-        ('timeArg', (), _M_OperationsWithOptionals._t_Time, False, 0),
-        ('optIntArg', (), IcePy._t_int, True, 5),
-        ('optStrArg', (), IcePy._t_string, True, 6),
-        ('optEnumArg', (), _M_OperationsWithOptionals._t_EEnum, True, 7),
-        ('optTimeArg', (), _M_OperationsWithOptionals._t_Time, True, 8)
-    ))
-    Request._ice_type = _M_OperationsWithOptionals._t_Request
-
-    _M_OperationsWithOptionals.Request = Request
-    del Request
-
-if 'Response' not in _M_OperationsWithOptionals.__dict__:
-    _M_OperationsWithOptionals.Response = Ice.createTempClass()
-    class Response(Ice.Value):
-        def __init__(self, strResp='', enumArg=_M_OperationsWithOptionals.EEnum.CYAN, optStrResp=Ice.Unset, optEnumArg=Ice.Unset):
-            self.strResp = strResp
-            self.enumArg = enumArg
-            self.optStrResp = optStrResp
-            self.optEnumArg = optEnumArg
-
-        def ice_id(self):
-            return '::OperationsWithOptionals::Response'
-
-        @staticmethod
-        def ice_staticId():
-            return '::OperationsWithOptionals::Response'
-
-        def __str__(self):
-            return IcePy.stringify(self, _M_OperationsWithOptionals._t_Response)
-
-        __repr__ = __str__
-
-    _M_OperationsWithOptionals._t_Response = IcePy.defineValue('::OperationsWithOptionals::Response', Response, -1, (), False, False, None, (
-        ('strResp', (), IcePy._t_string, False, 0),
-        ('enumArg', (), _M_OperationsWithOptionals._t_EEnum, False, 0),
-        ('optStrResp', (), IcePy._t_string, True, 3),
-        ('optEnumArg', (), _M_OperationsWithOptionals._t_EEnum, True, 4)
-    ))
-    Response._ice_type = _M_OperationsWithOptionals._t_Response
-
-    _M_OperationsWithOptionals.Response = Response
-    del Response
-
-_M_OperationsWithOptionals._t_ExampleService = IcePy.defineValue('::OperationsWithOptionals::ExampleService', Ice.Value, -1, (), False, True, None, ())
-
-if 'ExampleServicePrx' not in _M_OperationsWithOptionals.__dict__:
-    _M_OperationsWithOptionals.ExampleServicePrx = Ice.createTempClass()
-    class ExampleServicePrx(Ice.ObjectPrx):
-
-        def OppOperation(self, request, context=None):
-            return _M_OperationsWithOptionals.ExampleService._op_OppOperation.invoke(self, ((request, ), context))
-
-        def OppOperationAsync(self, request, context=None):
-            return _M_OperationsWithOptionals.ExampleService._op_OppOperation.invokeAsync(self, ((request, ), context))
-
-        def begin_OppOperation(self, request, _response=None, _ex=None, _sent=None, context=None):
-            return _M_OperationsWithOptionals.ExampleService._op_OppOperation.begin(self, ((request, ), _response, _ex, _sent, context))
-
-        def end_OppOperation(self, _r):
-            return _M_OperationsWithOptionals.ExampleService._op_OppOperation.end(self, _r)
+        def end_TestingOperation(self, _r):
+            return _M_ZadI4.TestingService._op_TestingOperation.end(self, _r)
 
         @staticmethod
         def checkedCast(proxy, facetOrContext=None, context=None):
-            return _M_OperationsWithOptionals.ExampleServicePrx.ice_checkedCast(proxy, '::OperationsWithOptionals::ExampleService', facetOrContext, context)
+            return _M_ZadI4.TestingServicePrx.ice_checkedCast(proxy, '::ZadI4::TestingService', facetOrContext, context)
 
         @staticmethod
         def uncheckedCast(proxy, facet=None):
-            return _M_OperationsWithOptionals.ExampleServicePrx.ice_uncheckedCast(proxy, facet)
+            return _M_ZadI4.TestingServicePrx.ice_uncheckedCast(proxy, facet)
 
         @staticmethod
         def ice_staticId():
-            return '::OperationsWithOptionals::ExampleService'
-    _M_OperationsWithOptionals._t_ExampleServicePrx = IcePy.defineProxy('::OperationsWithOptionals::ExampleService', ExampleServicePrx)
+            return '::ZadI4::TestingService'
+    _M_ZadI4._t_TestingServicePrx = IcePy.defineProxy('::ZadI4::TestingService', TestingServicePrx)
 
-    _M_OperationsWithOptionals.ExampleServicePrx = ExampleServicePrx
-    del ExampleServicePrx
+    _M_ZadI4.TestingServicePrx = TestingServicePrx
+    del TestingServicePrx
 
-    _M_OperationsWithOptionals.ExampleService = Ice.createTempClass()
-    class ExampleService(Ice.Object):
+    _M_ZadI4.TestingService = Ice.createTempClass()
+    class TestingService(Ice.Object):
 
         def ice_ids(self, current=None):
-            return ('::Ice::Object', '::OperationsWithOptionals::ExampleService')
+            return ('::Ice::Object', '::ZadI4::TestingService')
 
         def ice_id(self, current=None):
-            return '::OperationsWithOptionals::ExampleService'
+            return '::ZadI4::TestingService'
 
         @staticmethod
         def ice_staticId():
-            return '::OperationsWithOptionals::ExampleService'
+            return '::ZadI4::TestingService'
 
-        def OppOperation(self, request, current=None):
-            raise NotImplementedError("servant method 'OppOperation' not implemented")
+        def TestingOperation(self, person, current=None):
+            raise NotImplementedError("servant method 'TestingOperation' not implemented")
 
         def __str__(self):
-            return IcePy.stringify(self, _M_OperationsWithOptionals._t_ExampleServiceDisp)
+            return IcePy.stringify(self, _M_ZadI4._t_TestingServiceDisp)
 
         __repr__ = __str__
 
-    _M_OperationsWithOptionals._t_ExampleServiceDisp = IcePy.defineClass('::OperationsWithOptionals::ExampleService', ExampleService, (), None, ())
-    ExampleService._ice_type = _M_OperationsWithOptionals._t_ExampleServiceDisp
+    _M_ZadI4._t_TestingServiceDisp = IcePy.defineClass('::ZadI4::TestingService', TestingService, (), None, ())
+    TestingService._ice_type = _M_ZadI4._t_TestingServiceDisp
 
-    ExampleService._op_OppOperation = IcePy.Operation('OppOperation', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), _M_OperationsWithOptionals._t_Request, False, 0),), (), ((), _M_OperationsWithOptionals._t_Response, False, 0), ())
+    TestingService._op_TestingOperation = IcePy.Operation('TestingOperation', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), _M_ZadI4._t_Person, False, 0),), (), None, ())
 
-    _M_OperationsWithOptionals.ExampleService = ExampleService
-    del ExampleService
+    _M_ZadI4.TestingService = TestingService
+    del TestingService
 
-# End of module OperationsWithOptionals
+# End of module ZadI4

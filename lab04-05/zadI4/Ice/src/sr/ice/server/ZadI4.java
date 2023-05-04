@@ -8,66 +8,41 @@ package sr.ice.server;
 //
 // **********************************************************************
 
-import OperationsWithOptionals.ExampleService;
-import OperationsWithOptionals.Request;
-import OperationsWithOptionals.Response;
+import ZadI4.TestingService;
+import ZadI4.Person;
 import com.zeroc.Ice.Current;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ZadI4 implements ExampleService {
+public class ZadI4 implements TestingService {
     private static final int Sleep = 4000;
 
     @Override
-    public Response OppOperation(Request request, Current current) {
+    public void TestingOperation(Person person, Current current) {
         try {
             Thread.sleep(Sleep);
-            System.out.println("client request incoming!");
-            return BuildResponse(request);
+            System.out.println("request");
+            TestResults(person);
         } catch (Exception e) {
-            //noinspection ThrowablePrintedToSystemOut
             System.out.println(e);
-            return null;
         }
     }
 
-    private static Response BuildResponse(Request request) {
-        List<String> sb1 = new ArrayList<>(), sb2 = new ArrayList<>();
+    private void TestResults(Person person) {
+        String firstname = "firstname: " + person.firstName;
+        String middlename = "";
+        String lasename = "lasename: " + person.lastName;
+        String birthdate = "";
 
-        sb1.add("str: " + request.strArg);
-        sb1.add("int: " + request.intArg);
-        sb1.add("hh: " + request.timeArg.hours);
-        sb1.add("mm: " + request.timeArg.minutes);
-
-        if (request.timeArg.hasSeconds())
-            sb1.add("ss: " + request.timeArg.getSeconds());
-
-        if (request.hasOptStrArg() && !request.getOptStrArg().isBlank())
-            sb2.add("str: " + request.getOptStrArg());
-
-        if (request.hasOptIntArg())
-            sb2.add("int: " + request.getOptIntArg());
-
-        if (request.hasOptTimeArg()) {
-            sb2.add("hh:" + request.getOptTimeArg().hours);
-            sb2.add("mm:" + request.getOptTimeArg().minutes);
-
-            if (request.getOptTimeArg().hasSeconds()) {
-                sb2.add("ss:" + request.getOptTimeArg().getSeconds());
-            }
+        if (person.hasMiddleName()) {
+            middlename = "middlename: " + person.getMiddleName();
+        }
+        if (person.hasBirthDate()) {
+            birthdate = "birthdate: " + person.getBirthDate();
         }
 
-        var result = new Response();
-        result.strResp = (String.join(", ", sb1));
-        result.enumArg = request.enumArg;
+        System.out.println(firstname);
+        System.out.println(middlename);
+        System.out.println(lasename);
+        System.out.println(birthdate);
 
-        if (!sb2.isEmpty())
-            result.setOptStrResp(String.join(", ", sb2));
-
-        if (request.hasOptEnumArg())
-            result.setOptEnumArg(request.getOptEnumArg());
-
-        return result;
     }
 }
