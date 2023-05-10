@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option go_package = "./grpcproject";
+
+service GrpcProject {
+    rpc Subscribe (SubscribeRequest) returns (stream Notification) {}
+    // rpc Unsubscribe (UnsubscribeRequest) returns () {}
+}
+
+enum TestEnum {
+    test1 = 0;
+    test2 = 1;
+    test3 = 2;
+}
+
+message SubscribeRequest {
+    int32 subscribtion_id = 1;
+    string name = 2;
+}
+
+message Notification {
+    int32 subscribtion_id = 1;
+    string message = 2;
+    int32 time = 3;
+    repeated int32 times = 4;
+    TestEnum test_enum = 5;
+}
+
+// message UnsubscribeRequest {
+//     int32 subscribtion_id = 1;
+// }

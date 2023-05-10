@@ -22,10 +22,10 @@ lab03_zip:
 	zip -r archives/Rys_Szymon_3.zip Rys_Szymon_3/ oswiadczenie.txt
 	rm -r Rys_Szymon_3
 
-.PHONY: lab04_zip
+.PHONY: lab04_05_zip
 lab04_zip:
-	mkdir Rys_Szymon_4
+	mkdir Rys_Szymon_4_5
 	mkdir -p archives
-	cp -r lab04/ Rys_Szymon_4/
-	zip -r archives/Rys_Szymon_4.zip Rys_Szymon_4/ oswiadczenie.txt
-	rm -r Rys_Szymon_4
+	cp -r lab04-05/ Rys_Szymon_4_5/
+	zip -r archives/Rys_Szymon_4_5.zip Rys_Szymon_4_5/ oswiadczenie.txt
+	rm -r Rys_Szymon_4_5
