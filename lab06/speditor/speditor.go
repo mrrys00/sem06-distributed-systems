@@ -2,17 +2,16 @@ package main
 
 import (
 	"fmt"
+	"github.com/streadway/amqp"
 	"log"
 	"os"
 	"spaceprogram/config"
-
-	"github.com/streadway/amqp"
 )
 
 func main() {
 	name := os.Args[1]
 
-	connection, channel, err := config.SetupRabbitConnection()
+	connection, channel, err := config.SetupRabbitConnection(config.SpeditorName)
 	if err != nil {
 		log.Panicf("%+v\n", err)
 	}
@@ -29,29 +28,44 @@ func main() {
 		}
 	}(channel)
 
-	config.SetupSpeditorQueues(name)
-
-	// declaring consumer with its properties over channel opened
-	msgs, err := channel.Consume(
-		"testing", // queue
-		"",        // consumer
-		true,      // auto ack
-		false,     // exclusive
-		false,     // no local
-		false,     // no wait
-		nil,       //args
-	)
+	queueHuman, queueCargo, queueSatellite, queueAdminListen, err := config.SetupSpeditorQueues(channel, name)
 	if err != nil {
-		panic(err)
+		log.Panicf("%+v\n", err)
 	}
 
-	// print consumed messages from queue
 	forever := make(chan bool)
-	go func() {
-		for msg := range msgs {
-			fmt.Printf("Received Message: %s\n", msg.Body)
-		}
-	}()
+	if queueHuman != nil {
+		go func() {
+			log.Printf("Human queue starts ...\n")
+			for msg := range queueHuman {
+				log.Printf("Human request: %s\n", msg.Body)
+			}
+		}()
+	}
+	if queueCargo != nil {
+		go func() {
+			log.Printf("Cargo queue starts ...\n")
+			for msg := range queueCargo {
+				log.Printf("Cargo request: %s\n", msg.Body)
+			}
+		}()
+	}
+	if queueSatellite != nil {
+		go func() {
+			log.Printf("Satelitte queue starts ...\n")
+			for msg := range queueSatellite {
+				log.Printf("Satellite request: %s\n", msg.Body)
+			}
+		}()
+	}
+	if queueAdminListen != nil {
+		go func() {
+			log.Printf("Admin queue starts ...\n")
+			for msg := range queueAdminListen {
+				log.Printf("Admin message: %s\n", msg.Body)
+			}
+		}()
+	}
 
 	fmt.Println("Waiting for messages...")
 	<-forever

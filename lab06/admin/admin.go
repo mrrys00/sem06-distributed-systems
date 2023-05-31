@@ -5,10 +5,12 @@ import (
 	"github.com/streadway/amqp"
 	"log"
 	"spaceprogram/config"
+	"spaceprogram/utils"
+	"time"
 )
 
 func main() {
-	connection, channel, err := config.SetupRabbitConnection()
+	connection, channel, err := config.SetupRabbitConnection(config.AdminName)
 	if err != nil {
 		log.Panicf("%+v\n", err)
 	}
@@ -25,31 +27,84 @@ func main() {
 		}
 	}(channel)
 
-	config.SetupAdminQueues()
-
-	// publikacja admina do wszystkich po parametrze UserId z publish
-
-	//declaring queue with its properties over the channel opened
-	msgs, err := channel.Consume(
-		config.QueueNameAdminListen,
-		"admin",
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
+	queueSpedit, queueAgency, queueAdminCopy, err := config.SetupAdminQueues(channel)
 	if err != nil {
-		panic(err)
+		log.Panicf("%+v\n", err)
 	}
 
-	// print consumed messages from queue
 	forever := make(chan bool)
 	go func() {
-		for msg := range msgs {
-			fmt.Printf("[ADMIN] Received Message: %s\n", msg.Body)
+		log.Printf("Speditor routine starts ...\n")
+		for {
+			msg := fmt.Sprintf("[Admin to speditor]")
+
+			err := utils.PublishMessage(channel, queueSpedit.Name, msg)
+			if err != nil {
+				log.Printf("Cannot send message to %s queue\n", queueSpedit.Name)
+			}
+			err = utils.PublishMessage(channel, queueSpedit.Name, msg)
+			if err != nil {
+				log.Printf("Cannot send message to %s queue\n", queueSpedit.Name)
+			}
+			utils.PrintQueueParams(queueSpedit)
+
+			time.Sleep(5 * time.Second)
 		}
 	}()
+	go func() {
+		log.Printf("Agency routine starts ...\n")
+		for {
+			msg := fmt.Sprintf("[Admin to agency]")
+
+			err := utils.PublishMessage(channel, queueAgency.Name, msg)
+			if err != nil {
+				log.Printf("Cannot send message to %s queue\n", queueAgency.Name)
+			}
+			err = utils.PublishMessage(channel, queueAgency.Name, msg)
+			if err != nil {
+				log.Printf("Cannot send message to %s queue\n", queueAgency.Name)
+			}
+			utils.PrintQueueParams(queueAgency)
+
+			time.Sleep(3 * time.Second)
+		}
+	}()
+	go func() {
+		log.Printf("Agency and speditor routine starts ...\n")
+		for {
+			msg := fmt.Sprintf("[Admin to agency and speditor]")
+
+			err := utils.PublishMessage(channel, queueAgency.Name, msg)
+			if err != nil {
+				log.Printf("Cannot send message to %s queue\n", queueAgency.Name)
+			}
+			err = utils.PublishMessage(channel, queueAgency.Name, msg)
+			if err != nil {
+				log.Printf("Cannot send message to %s queue\n", queueAgency.Name)
+			}
+			err = utils.PublishMessage(channel, queueSpedit.Name, msg)
+			if err != nil {
+				log.Printf("Cannot send message to %s queue\n", queueSpedit.Name)
+			}
+			err = utils.PublishMessage(channel, queueSpedit.Name, msg)
+			if err != nil {
+				log.Printf("Cannot send message to %s queue\n", queueSpedit.Name)
+			}
+			utils.PrintQueueParams(queueSpedit)
+			utils.PrintQueueParams(queueAgency)
+
+			time.Sleep(3 * time.Second)
+		}
+	}()
+
+	if queueAdminCopy != nil {
+		log.Printf("Copied messages routine starts ...\n")
+		go func() {
+			for msg := range queueAdminCopy {
+				log.Printf("[COPY] message: %s\n", msg.Body)
+			}
+		}()
+	}
 
 	fmt.Println("Waiting for messages...")
 	<-forever
