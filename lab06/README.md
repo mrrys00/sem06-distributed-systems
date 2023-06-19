@@ -41,6 +41,8 @@ W systemie jest 6 kolejek
 | queue_admin_spedit | Admin | Speditor1, Speditor2 |
 | queue_admin_agency | Admin | Agency1, Agency2 |
 
+![Queues](./docs.png)
+
 ## Klucze
 
 Kluczami są po prostu nazwy kolejek tak aby nie wprowadzać zbędnego zamieszania. Poza tym najciemniej pod latarnią i nikt tych kluczy nie zgadnie.
