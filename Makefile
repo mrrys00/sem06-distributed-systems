@@ -29,3 +29,19 @@ lab04_zip:
 	cp -r lab04-05/ Rys_Szymon_4_5/
 	zip -r archives/Rys_Szymon_4_5.zip Rys_Szymon_4_5/ oswiadczenie.txt
 	rm -r Rys_Szymon_4_5
+
+.PHONY: lab06_zip
+lab06_zip:
+	mkdir Rys_Szymon_6
+	mkdir -p archives
+	cp -r lab06/ Rys_Szymon_6/
+	zip -r archives/Rys_Szymon_6.zip Rys_Szymon_6/ oswiadczenie.txt
+	rm -r Rys_Szymon_6
+
+.PHONY: lab07_zip
+lab07_zip:
+	mkdir Rys_Szymon_7
+	mkdir -p archives
+	cp -r lab07/ Rys_Szymon_7/
+	zip -r archives/Rys_Szymon_7.zip Rys_Szymon_7/ oswiadczenie.txt
+	rm -r Rys_Szymon_7
